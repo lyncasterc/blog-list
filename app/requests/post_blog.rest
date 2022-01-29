@@ -1,0 +1,10 @@
+# POST request to create a new blog item
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Using Active Storage in Rails 6",
+  "author": "Mike Clark",
+  "url": "https://pragmaticstudio.com/tutorials/using-active-storage-in-rails",
+  "likes": 0
+}

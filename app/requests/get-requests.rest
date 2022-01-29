@@ -1,0 +1,2 @@
+#GET request to fetch all blog items
+GET http://localhost:3001/api/blogs
