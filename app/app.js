@@ -8,9 +8,9 @@ const app = express();
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 
-logger.info('Connecting to: ', config.MONGODB_URI);
-
 if (process.env.NODE_ENV !== 'test') {
+  logger.info('Connecting to: ', config.MONGODB_URI);
+
   mongoose.connect(config.MONGODB_URI)
     .then(() => {
       logger.info('Connected to MongoDB');
