@@ -111,14 +111,36 @@ describe('posting blogs', () => {
 describe('deleting blogs', () => {
   test('can delete existing blog', async () => {
     const currentBlogs = await testHelper.blogsInDB();
-    const targetNoteID = currentBlogs[0].id;
+    const targetBlogID = currentBlogs[0].id;
 
     await api
-      .delete(`/api/blogs/${targetNoteID}`)
+      .delete(`/api/blogs/${targetBlogID}`)
       .expect(204);
 
     const updatedBlogs = await testHelper.blogsInDB();
 
     expect(updatedBlogs).toHaveLength(testHelper.initialBlogs.length - 1);
+  });
+});
+
+describe('updating blogs', () => {
+  test('can update existing blog', async () => {
+    const targetBlog = (await testHelper.blogsInDB())[0];
+    const updatedBlog = {
+      title: targetBlog.title,
+      author: targetBlog.author,
+      url: targetBlog.url,
+      likes: targetBlog.likes += 3,
+      id: targetBlog.id,
+    };
+
+    await api
+      .put(`/api/blogs/${targetBlog.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const retrievedBlog = JSON.parse(JSON.stringify((await Blog.findById(targetBlog.id))));
+    expect(retrievedBlog).toEqual(updatedBlog);
   });
 });
