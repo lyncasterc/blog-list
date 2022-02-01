@@ -107,3 +107,18 @@ describe('posting blogs', () => {
     expect(savedNote.likes).toBe(0);
   });
 });
+
+describe('deleting blogs', () => {
+  test('can delete existing blog', async () => {
+    const currentBlogs = await testHelper.blogsInDB();
+    const targetNoteID = currentBlogs[0].id;
+
+    await api
+      .delete(`/api/blogs/${targetNoteID}`)
+      .expect(204);
+
+    const updatedBlogs = await testHelper.blogsInDB();
+
+    expect(updatedBlogs).toHaveLength(testHelper.initialBlogs.length - 1);
+  });
+});
