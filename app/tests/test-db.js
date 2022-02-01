@@ -1,12 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable global-require */
 const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 const logger = require('../utils/logger');
-
-if (process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line no-unused-vars
-  const { MongoMemoryServer } = require('mongodb-memory-server');
-}
 
 let mongodbServer;
 
