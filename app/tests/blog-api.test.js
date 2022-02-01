@@ -16,90 +16,94 @@ beforeEach(async () => {
 });
 afterAll(() => testDB.close());
 
-test('blogs are returned as JSON', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
+describe('when there are blogs initially in database', () => {
+  test('blogs are returned as JSON', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  });
+
+  test('unique identifier of blog is named id', async () => {
+    const currentBlogs = await testHelper.blogsInDB();
+    currentBlogs.forEach((blog) => expect(blog.id).toBeDefined());
+  });
+
+  test('all blogs are returned', async () => {
+    const response = await api
+      .get('/api/blogs');
+
+    expect(response.body).toHaveLength(testHelper.initialBlogs.length);
+  });
 });
 
-test('unique identifier of blog is named id', async () => {
-  const currentBlogs = await testHelper.blogsInDB();
-  currentBlogs.forEach((blog) => expect(blog.id).toBeDefined());
-});
+describe('posting blogs', () => {
+  test('can post a valid blog', async () => {
+    const validNote = {
+      title: 'supervalidnote',
+      author: 'supervalidauthor',
+      url: 'supervalidurl.com',
+      likes: 10,
+    };
 
-test('all blogs are returned', async () => {
-  const response = await api
-    .get('/api/blogs');
+    await api
+      .post('/api/blogs')
+      .send(validNote)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-  expect(response.body).toHaveLength(testHelper.initialBlogs.length);
-});
+    const allCurrentBlogs = await testHelper.blogsInDB();
+    const titles = allCurrentBlogs.map((blog) => blog.title);
 
-test('can post a valid blog', async () => {
-  const validNote = {
-    title: 'supervalidnote',
-    author: 'supervalidauthor',
-    url: 'supervalidurl.com',
-    likes: 10,
-  };
+    expect(titles).toContainEqual(validNote.title);
+    expect(titles).toHaveLength(testHelper.initialBlogs.length + 1);
+  });
 
-  await api
-    .post('/api/blogs')
-    .send(validNote)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
+  test('cannot post blog with missing url', async () => {
+    const invalidNote = {
+      title: 'supervalidnote',
+      author: 'supervalidauthor',
+      likes: 10,
+    };
 
-  const allCurrentBlogs = await testHelper.blogsInDB();
-  const titles = allCurrentBlogs.map((blog) => blog.title);
+    await api
+      .post('/api/blogs')
+      .send(invalidNote)
+      .expect(400);
 
-  expect(titles).toContainEqual(validNote.title);
-  expect(titles).toHaveLength(testHelper.initialBlogs.length + 1);
-});
+    const currentBlogs = await testHelper.blogsInDB();
 
-test('cannot post blog with missing url', async () => {
-  const invalidNote = {
-    title: 'supervalidnote',
-    author: 'supervalidauthor',
-    likes: 10,
-  };
+    expect(currentBlogs).toHaveLength(testHelper.initialBlogs.length);
+  });
 
-  await api
-    .post('/api/blogs')
-    .send(invalidNote)
-    .expect(400);
+  test('cannot post blog with missing title', async () => {
+    const invalidNote = {
+      author: 'supervalidauthor',
+      url: 'supervalidurl.com',
+      likes: 10,
+    };
 
-  const currentBlogs = await testHelper.blogsInDB();
+    await api
+      .post('/api/blogs')
+      .send(invalidNote)
+      .expect(400);
 
-  expect(currentBlogs).toHaveLength(testHelper.initialBlogs.length);
-});
+    const currentBlogs = await testHelper.blogsInDB();
 
-test('cannot post blog with missing title', async () => {
-  const invalidNote = {
-    author: 'supervalidauthor',
-    url: 'supervalidurl.com',
-    likes: 10,
-  };
+    expect(currentBlogs).toHaveLength(testHelper.initialBlogs.length);
+  });
 
-  await api
-    .post('/api/blogs')
-    .send(invalidNote)
-    .expect(400);
+  test('blog posted with no like property is set to 0 likes', async () => {
+    const validNote = {
+      title: 'supervalidnote',
+      author: 'supervalidauthor',
+      url: 'supervalidurl.com',
+    };
+    const response = await api
+      .post('/api/blogs')
+      .send(validNote);
 
-  const currentBlogs = await testHelper.blogsInDB();
-
-  expect(currentBlogs).toHaveLength(testHelper.initialBlogs.length);
-});
-
-test('blog posted with no like property is set to 0 likes', async () => {
-  const validNote = {
-    title: 'supervalidnote',
-    author: 'supervalidauthor',
-    url: 'supervalidurl.com',
-  };
-  const response = await api
-    .post('/api/blogs')
-    .send(validNote);
-
-  const savedNote = response.body;
-  expect(savedNote.likes).toBe(0);
+    const savedNote = response.body;
+    expect(savedNote.likes).toBe(0);
+  });
 });
