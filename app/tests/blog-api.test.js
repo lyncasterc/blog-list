@@ -1,9 +1,7 @@
 const supertest = require('supertest');
-// const bcrypt = require('bcrypt');
 const app = require('../app');
 const testDB = require('./test-db');
 const Blog = require('../models/blog');
-// const User = require('../models/user');
 const testHelper = require('./test-helper');
 
 const api = supertest(app);
@@ -12,11 +10,7 @@ beforeAll(() => testDB.connect());
 beforeEach(async () => {
   await testDB.clear();
 
-  // const passwordHash = await bcrypt.hash('secret', 10);
-  // const user = new User({ name: 'Superuser', username: 'admin', passwordHash });
-  // const savedUser = (await user.save()).toJSON();
   const savedUser = await testHelper.createTestUser('admin');
-
   const initialBlogs = [
     {
       title: 'title1',
