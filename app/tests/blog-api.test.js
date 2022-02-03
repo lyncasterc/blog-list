@@ -5,6 +5,8 @@ const Blog = require('../models/blog');
 const testHelper = require('./test-helper');
 
 const api = supertest(app);
+// todo: write get for fetching all users, test (dont forget propogate for both users and blogs)
+// todo: test users and blogs relation manually
 
 beforeAll(() => testDB.connect());
 beforeEach(async () => {
@@ -90,7 +92,7 @@ describe('posting blogs', () => {
   test('cannot post blog with missing url', async () => {
     const testUser = await testHelper.createTestUser('admin2');
     const startBlogs = await testHelper.blogsInDB();
-    const invalidNote = {
+    const invalidBlog = {
       title: 'supervalidnote',
       author: 'supervalidauthor',
       likes: 10,
@@ -99,7 +101,7 @@ describe('posting blogs', () => {
 
     await api
       .post('/api/blogs')
-      .send(invalidNote)
+      .send(invalidBlog)
       .expect(400);
 
     const endBlogs = await testHelper.blogsInDB();
@@ -110,20 +112,41 @@ describe('posting blogs', () => {
   test('cannot post blog with missing title', async () => {
     const testUser = await testHelper.createTestUser('admin2');
     const startBlogs = await testHelper.blogsInDB();
-    const invalidNote = {
+    const invalidBlog = {
       author: 'supervalidauthor',
+      url: 'supervalidurl.com',
       likes: 10,
       userID: testUser.id,
     };
 
     await api
       .post('/api/blogs')
-      .send(invalidNote)
+      .send(invalidBlog)
       .expect(400);
 
     const endBlogs = await testHelper.blogsInDB();
 
     expect(endBlogs).toHaveLength(startBlogs.length);
+  });
+
+  test('creating blog without userID field fails with 400', async () => {
+    const startBlogs = await testHelper.blogsInDB();
+    const invalidBlog = {
+      author: 'supervalidauthor',
+      title: 'superduper',
+      likes: 10,
+      url: 'superblog.com',
+    };
+
+    const response = await api
+      .post('/api/blogs')
+      .send(invalidBlog)
+      .expect(400);
+
+    const endBlogs = await testHelper.blogsInDB();
+
+    expect(endBlogs).toHaveLength(startBlogs.length);
+    expect(response.body).toContain('Only valid users can add blogs!');
   });
 
   test('blog posted with no like property is set to 0 likes', async () => {
@@ -159,7 +182,7 @@ describe('deleting blogs', () => {
 });
 
 describe('updating blogs', () => {
-  test.only('can update existing blog', async () => {
+  test('can update existing blog', async () => {
     const targetBlog = (await testHelper.blogsInDB())[0];
     const updatedBlog = {
       title: targetBlog.title,
