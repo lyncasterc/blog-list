@@ -41,24 +41,16 @@ describe('when mutiple users are in database', () => {
 
       expect(response.body).toHaveLength(startUsers.length);
     });
-  });
 
-  test('users are returned as JSON', async () => {
-    await api
-      .get('/api/users')
-      .expect(200)
-      .expect('Content-Type', /application\/json/);
-  });
-});
-
-describe('creating users', () => {
-  describe('when one user is in database', () => {
-    beforeEach(async () => {
-      const passwordHash = await bcrypt.hash('secret', 10);
-      const user = new User({ name: 'Superuser', username: 'admin', passwordHash });
-      await user.save();
+    test('users are returned as JSON', async () => {
+      await api
+        .get('/api/users')
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
     });
+  });
 
+  describe('creating users', () => {
     test('creating valid user with unique username succeeds', async () => {
       const startUsers = await testHelper.usersInDB();
 
@@ -83,8 +75,9 @@ describe('creating users', () => {
 
     test('creating user with existing username fails with 400', async () => {
       const startUsers = await testHelper.usersInDB();
+      const { username } = startUsers[0];
       const invalidUser = {
-        username: 'admin',
+        username,
         name: 'Billy Bobby',
         password: 'supersecretpassword',
       };
@@ -100,25 +93,25 @@ describe('creating users', () => {
 
       expect(response.body.error).toContain('That username is already taken!');
     });
-  });
 
-  test('creating user password shorter than 3 chars fails with 400', async () => {
-    const startUsers = await testHelper.usersInDB();
-    const invalidUser = {
-      username: 'billybo',
-      name: 'Billy Bobby',
-      password: 'su',
-    };
+    test('creating user password shorter than 3 chars fails with 400', async () => {
+      const startUsers = await testHelper.usersInDB();
+      const invalidUser = {
+        username: 'billybo',
+        name: 'Billy Bobby',
+        password: 'su',
+      };
 
-    const response = await api
-      .post('/api/users')
-      .send(invalidUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/);
+      const response = await api
+        .post('/api/users')
+        .send(invalidUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
 
-    const endUsers = await testHelper.usersInDB();
-    expect(endUsers).toHaveLength(startUsers.length);
+      const endUsers = await testHelper.usersInDB();
+      expect(endUsers).toHaveLength(startUsers.length);
 
-    expect(response.body.error).toContain('Password is too short!');
+      expect(response.body.error).toContain('Password is too short!');
+    });
   });
 });
