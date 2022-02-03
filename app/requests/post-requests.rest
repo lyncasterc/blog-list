@@ -1,4 +1,17 @@
+#POST request to create new user
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "name:": "Superuser",
+  "password": "secret",
+  "blogs": []
+}
+###
+
 # POST request to create a new blog item
+@existingUser = 
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
