@@ -13,6 +13,11 @@ const blogSchema = new mongoose.Schema({
     required: [true, 'Link a URL to this blog!'],
   },
   likes: Number,
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Only valid users can add blogs!'],
+  },
 });
 
 blogSchema.set('toJSON', {
