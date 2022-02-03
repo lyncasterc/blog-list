@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const config = require('./utils/config');
+const testDB = require('./tests/test-db');
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
 
@@ -9,7 +10,7 @@ const app = express();
 const middleware = require('./utils/middleware');
 const logger = require('./utils/logger');
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV === 'production') {
   logger.info('Connecting to: ', config.MONGODB_URI);
 
   mongoose.connect(config.MONGODB_URI)
@@ -19,6 +20,8 @@ if (process.env.NODE_ENV !== 'test') {
     .catch((error) => {
       logger.error('Error connecting to MongoDB: ', error.message);
     });
+} else {
+  testDB.connect();
 }
 
 app.use(cors());
