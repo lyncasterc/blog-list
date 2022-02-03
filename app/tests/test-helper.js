@@ -1,20 +1,14 @@
+const bcrypt = require('bcrypt');
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
-const initialBlogs = [
-  {
-    title: 'title1',
-    author: 'bob dob',
-    url: 'reallycoolurl.com',
-    likes: 2,
-  },
-  {
-    title: 'title2',
-    author: 'uncle bo',
-    url: 'whatintarnation.com',
-    likes: 10,
-  },
-];
+// creating test user for the required userID fields in the test blogs
+const createTestUser = async (username) => {
+  const passwordHash = await bcrypt.hash('secret', 10);
+  const user = new User({ name: 'Superuser', username, passwordHash });
+  const savedUser = (await user.save()).toJSON();
+  return savedUser;
+};
 
 const nonExistingID = async () => {
   const blog = {
@@ -41,8 +35,8 @@ const usersInDB = async () => {
 };
 
 module.exports = {
-  initialBlogs,
   blogsInDB,
   nonExistingID,
   usersInDB,
+  createTestUser,
 };
