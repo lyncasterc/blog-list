@@ -42,6 +42,13 @@ describe('when mutiple users are in database', () => {
       expect(response.body).toHaveLength(startUsers.length);
     });
   });
+
+  test('users are returned as JSON', async () => {
+    await api
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  });
 });
 
 describe('creating users', () => {
