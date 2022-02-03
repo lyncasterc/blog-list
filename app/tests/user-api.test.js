@@ -8,8 +8,41 @@ const User = require('../models/user');
 const api = supertest(app);
 
 beforeAll(async () => { await testDB.connect(); });
-beforeEach(async () => { await testDB.clear(); });
+beforeEach(async () => {
+  await testDB.clear();
+
+  const passwordHash = await bcrypt.hash('secret', 10);
+  const initialUsers = [
+    {
+      name: 'Superuser',
+      username: 'admin',
+      passwordHash,
+    },
+    {
+      name: 'Superuser2',
+      username: 'admin2',
+      passwordHash,
+    },
+  ];
+
+  const userObjects = initialUsers.map((user) => new User(user));
+  const promiseArray = userObjects.map((user) => user.save());
+  await Promise.all(promiseArray);
+});
 afterAll(async () => { await testDB.close(); });
+
+describe('when mutiple users are in database', () => {
+  describe('getting users', () => {
+    test('all saved users are returned', async () => {
+      const startUsers = await testHelper.usersInDB();
+      const response = await api
+        .get('/api/users')
+        .expect(200);
+
+      expect(response.body).toHaveLength(startUsers.length);
+    });
+  });
+});
 
 describe('creating users', () => {
   describe('when one user is in database', () => {
