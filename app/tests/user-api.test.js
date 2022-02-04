@@ -4,6 +4,7 @@ const app = require('../app');
 const testDB = require('./test-db');
 const testHelper = require('./test-helper');
 const User = require('../models/user');
+// const Blog = require('../models/blog');
 
 const api = supertest(app);
 
@@ -32,7 +33,7 @@ beforeEach(async () => {
 afterAll(async () => { await testDB.close(); });
 
 describe('when mutiple users are in database', () => {
-  describe('getting users', () => {
+  describe('when getting users', () => {
     test('all saved users are returned', async () => {
       const startUsers = await testHelper.usersInDB();
       const response = await api
@@ -50,7 +51,7 @@ describe('when mutiple users are in database', () => {
     });
   });
 
-  describe('creating users', () => {
+  describe('when creating users', () => {
     test('creating valid user with unique username succeeds', async () => {
       const startUsers = await testHelper.usersInDB();
 
@@ -112,6 +113,29 @@ describe('when mutiple users are in database', () => {
       expect(endUsers).toHaveLength(startUsers.length);
 
       expect(response.body.error).toContain('Password is too short!');
+    });
+  });
+
+  describe('when user posts a blog', () => {
+    beforeEach(async () => {
+      const { id } = await User.findOne({ username: 'admin' });
+      const blog = {
+        title: 'cool title ',
+        author: 'cool author',
+        url: 'cool.com',
+        likes: 0,
+        userID: id,
+      };
+
+      await api
+        .post('/api/blogs')
+        .send(blog);
+    });
+
+    test.only('blog is added to the user notes array', async () => {
+      const user = await User.findOne({ username: 'admin' });
+      expect(user.blogs).toBeDefined();
+      expect(user.blogs).toHaveLength(1);
     });
   });
 });
