@@ -11,7 +11,7 @@ Content-Type: application/json
 ###
 
 # POST request to create a new blog item
-@existingUser = 
+@existingUser = 61fca34f91dceeac7b3d88b6
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
@@ -19,5 +19,6 @@ Content-Type: application/json
   "title": "Using Active Storage in Rails 6",
   "author": "Mike Clark",
   "url": "https://pragmaticstudio.com/tutorials/using-active-storage-in-rails",
-  "likes": 0
+  "likes": 0,
+  "userID": "{{existingUser}}"
 }
