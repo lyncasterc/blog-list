@@ -5,8 +5,8 @@ const Blog = require('../models/blog');
 const testHelper = require('./test-helper');
 
 const api = supertest(app);
-// todo: write get for fetching all users, test (dont forget propogate for both users and blogs)
-// todo: test users and blogs relation manually
+let token;
+let testUser;
 
 beforeAll(() => testDB.connect());
 beforeEach(async () => {
@@ -64,8 +64,21 @@ describe('when there are blogs initially in database', () => {
 });
 
 describe('posting blogs', () => {
+  beforeEach(async () => {
+    testUser = await testHelper.createTestUser('admin2');
+    const loginInfo = {
+      username: testUser.username,
+      password: 'secret',
+    };
+
+    const response = await api
+      .post('/api/login')
+      .send(loginInfo);
+
+    token = response.body.token;
+  });
+
   test('can post a valid blog', async () => {
-    const testUser = await testHelper.createTestUser('admin2');
     const startBlogs = await testHelper.blogsInDB();
 
     const validNote = {
@@ -73,11 +86,11 @@ describe('posting blogs', () => {
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
       likes: 10,
-      userID: testUser.id,
     };
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(validNote)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -89,18 +102,38 @@ describe('posting blogs', () => {
     expect(titles).toHaveLength(startBlogs.length + 1);
   });
 
-  test('cannot post blog with missing url', async () => {
-    const testUser = await testHelper.createTestUser('admin2');
+  test('posting blog without token fails with 401', async () => {
+    const startBlogs = await testHelper.blogsInDB();
+    const note = {
+      title: 'supervalidnote',
+      author: 'supervalidauthor',
+      url: 'supervalidurl.com',
+      likes: 10,
+    };
+
+    const response = await api
+      .post('/api/blogs')
+      .send(note)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    const endBlogs = await testHelper.blogsInDB();
+
+    expect(endBlogs).toHaveLength(startBlogs.length);
+    expect(response.body.error).toContain('token missing or invalid');
+  });
+
+  test('posting blog with missing url fails with 400', async () => {
     const startBlogs = await testHelper.blogsInDB();
     const invalidBlog = {
       title: 'supervalidnote',
       author: 'supervalidauthor',
       likes: 10,
-      userID: testUser.id,
     };
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(invalidBlog)
       .expect(400);
 
@@ -110,55 +143,33 @@ describe('posting blogs', () => {
   });
 
   test('cannot post blog with missing title', async () => {
-    const testUser = await testHelper.createTestUser('admin2');
     const startBlogs = await testHelper.blogsInDB();
     const invalidBlog = {
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
       likes: 10,
-      userID: testUser.id,
     };
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(invalidBlog)
       .expect(400);
 
     const endBlogs = await testHelper.blogsInDB();
 
     expect(endBlogs).toHaveLength(startBlogs.length);
-  });
-
-  test('creating blog without userID field fails with 400', async () => {
-    const startBlogs = await testHelper.blogsInDB();
-    const invalidBlog = {
-      author: 'supervalidauthor',
-      title: 'superduper',
-      likes: 10,
-      url: 'superblog.com',
-    };
-
-    const response = await api
-      .post('/api/blogs')
-      .send(invalidBlog)
-      .expect(400);
-
-    const endBlogs = await testHelper.blogsInDB();
-
-    expect(endBlogs).toHaveLength(startBlogs.length);
-    expect(response.body).toContain('Only valid users can add blogs!');
   });
 
   test('blog posted with no like property is set to 0 likes', async () => {
-    const testUser = await testHelper.createTestUser('admin2');
     const validNote = {
       title: 'supervalidnote',
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
-      userID: testUser.id,
     };
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
       .send(validNote);
 
     const savedNote = response.body;
