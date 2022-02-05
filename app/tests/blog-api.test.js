@@ -12,21 +12,33 @@ beforeAll(() => testDB.connect());
 beforeEach(async () => {
   await testDB.clear();
 
-  const savedUser = await testHelper.createTestUser('admin');
+  testUser = await testHelper.createTestUser('admin1');
+
+  const loginInfo = {
+    username: testUser.username,
+    password: 'secret',
+  };
+
+  const response = await api
+    .post('/api/login')
+    .send(loginInfo);
+
+  token = response.body.token;
+
   const initialBlogs = [
     {
       title: 'title1',
       author: 'bob dob',
       url: 'reallycoolurl.com',
       likes: 2,
-      creator: savedUser.id,
+      creator: testUser.id,
     },
     {
       title: 'title2',
       author: 'uncle bo',
       url: 'whatintarnation.com',
       likes: 10,
-      creator: savedUser.id,
+      creator: testUser.id,
     },
   ];
 
@@ -64,20 +76,6 @@ describe('when there are blogs initially in database', () => {
 });
 
 describe('posting blogs', () => {
-  beforeEach(async () => {
-    testUser = await testHelper.createTestUser('admin2');
-    const loginInfo = {
-      username: testUser.username,
-      password: 'secret',
-    };
-
-    const response = await api
-      .post('/api/login')
-      .send(loginInfo);
-
-    token = response.body.token;
-  });
-
   test('can post a valid blog', async () => {
     const startBlogs = await testHelper.blogsInDB();
 
@@ -178,17 +176,59 @@ describe('posting blogs', () => {
 });
 
 describe('deleting blogs', () => {
-  test('can delete existing blog', async () => {
+  test('authenticated user can delete existing a blog they created', async () => {
     const startBlogs = await testHelper.blogsInDB();
     const targetBlogID = startBlogs[0].id;
 
     await api
       .delete(`/api/blogs/${targetBlogID}`)
+      .set('Authorization', `bearer ${token}`)
       .expect(204);
 
     const endBlogs = await testHelper.blogsInDB();
 
     expect(endBlogs).toHaveLength(startBlogs.length - 1);
+  });
+
+  test('delete request with no token fails with 401', async () => {
+    const startBlogs = await testHelper.blogsInDB();
+    const targetBlogID = startBlogs[0].id;
+
+    const response = await api
+      .delete(`/api/blogs/${targetBlogID}`)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    const endBlogs = await testHelper.blogsInDB();
+
+    expect(response.body.error).toContain('token missing or invalid');
+    expect(endBlogs).toHaveLength(startBlogs.length);
+  });
+
+  test('delete request with token but non-matching user id fails with 401', async () => {
+    const user = await testHelper.createTestUser('admin3');
+    const startBlogs = await testHelper.blogsInDB();
+    const loginInfo = {
+      username: user.username,
+      password: 'secret',
+    };
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send(loginInfo);
+
+    const unauthorizedToken = loginResponse.body.token;
+    const targetBlogID = startBlogs[0].id;
+
+    const response = await api
+      .delete(`/api/blogs/${targetBlogID}`)
+      .set('Authorization', `bearer ${unauthorizedToken}`)
+      .expect(401);
+
+    const endBlogs = await testHelper.blogsInDB();
+
+    expect(response.body.error).toContain('unauthorized token');
+    expect(endBlogs).toHaveLength(startBlogs.length);
   });
 });
 
