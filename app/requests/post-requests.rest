@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "username": "admin",
-  "name:": "Superuser",
+  "name": "Superuser",
   "password": "secret",
   "blogs": []
 }
