@@ -1,54 +1,26 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import propTypes from 'prop-types';
 import loginService from './services/login';
-
-function LoginForm({
-  handleLogin, username, password, setUsername, setPassword,
-}) {
-  return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          value={username}
-          onChange={setUsername}
-          placeholder="Enter Username"
-          name="username"
-        />
-      </div>
-
-      <div>
-        password
-        <input
-          value={password}
-          onChange={setPassword}
-          placeholder="Enter Password"
-          name="password"
-        />
-      </div>
-
-      <button type="submit">Log in</button>
-    </form>
-  );
-}
-
-LoginForm.propTypes = {
-  username: propTypes.string.isRequired,
-  password: propTypes.string.isRequired,
-  setUsername: propTypes.func.isRequired,
-  setPassword: propTypes.func.isRequired,
-  handleLogin: propTypes.func.isRequired,
-};
+import blogService from './services/blogs';
+import LoginForm from './components/LoginForm';
 
 function App() {
+  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [userTokenInfo, setUserTokenInfo] = useState(null);
 
+  useEffect(async () => {
+    try {
+      const initialBlogs = await blogService.getAll();
+      setBlogs(initialBlogs);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   useEffect(() => {
     const JSONTokenInfo = localStorage.getItem('bloglistAppUser');
-
     if (JSONTokenInfo) {
       setUserTokenInfo(JSON.parse(JSONTokenInfo));
     }
