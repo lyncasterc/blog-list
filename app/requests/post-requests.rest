@@ -11,14 +11,14 @@ Content-Type: application/json
 ###
 
 # POST request to create a new blog item
-@existingUser = 61fca34f91dceeac7b3d88b6
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiI2MjAwODcyMDI5MjMxNDkzNWZjNzY3YjIiLCJpYXQiOjE2NDQyMDE3OTQsImV4cCI6MTY0NDIwNTM5NH0.2_fdIYJ9qKppQQnHsK7kVyws8_uXOMbQ96CFInK4cT8
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: bearer {{token}}
 
 {
   "title": "Using Active Storage in Rails 6",
   "author": "Mike Clark",
   "url": "https://pragmaticstudio.com/tutorials/using-active-storage-in-rails",
-  "likes": 0,
-  "userID": "{{existingUser}}"
+  "likes": 0
 }
