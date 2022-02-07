@@ -4,6 +4,7 @@ import loginService from './services/login';
 import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
 import Blog from './components/Blog';
+import Button from './components/Button';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -43,16 +44,25 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('bloglistAppUser');
+    setUserTokenInfo(null);
+  };
+
   if (userTokenInfo) {
     return (
       <div>
+        <h2> Blogs </h2>
         <p>
           Hello,
           {' '}
           {userTokenInfo.name}
+          {' '}
+          <Button
+            buttonText="Log out"
+            onClick={handleLogout}
+          />
         </p>
-
-        <h2> Blogs </h2>
 
         {
           blogs.map((blog) => (
