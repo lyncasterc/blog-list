@@ -5,12 +5,20 @@ import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
 import Blog from './components/Blog';
 import Button from './components/Button';
+import BlogForm from './components/BlogForm';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [url, setURL] = useState('');
   const [userTokenInfo, setUserTokenInfo] = useState(null);
+  const [flash, setFlash] = useState({
+    type: '',
+    message: '',
+  });
 
   useEffect(async () => {
     try {
@@ -24,7 +32,9 @@ function App() {
   useEffect(() => {
     const JSONTokenInfo = localStorage.getItem('bloglistAppUser');
     if (JSONTokenInfo) {
-      setUserTokenInfo(JSON.parse(JSONTokenInfo));
+      const parsedTokenInfo = JSON.parse(JSONTokenInfo);
+      blogService.setToken(parsedTokenInfo.token);
+      setUserTokenInfo(parsedTokenInfo);
     }
   }, []);
 
@@ -34,6 +44,7 @@ function App() {
       const tokenInfo = await loginService.login({ username, password });
       if (tokenInfo) {
         localStorage.setItem('bloglistAppUser', JSON.stringify(tokenInfo));
+        blogService.setToken(tokenInfo.token);
         setUserTokenInfo(tokenInfo);
       }
 
@@ -47,6 +58,26 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('bloglistAppUser');
     setUserTokenInfo(null);
+  };
+
+  const addBlog = async (e) => {
+    e.preventDefault();
+
+    const newBlog = {
+      title,
+      author,
+      url,
+    };
+
+    try {
+      const savedBlog = await blogService.create(newBlog);
+      setBlogs(blogs.concat(savedBlog));
+      setAuthor('');
+      setURL('');
+      setTitle('');
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   if (userTokenInfo) {
@@ -73,6 +104,17 @@ function App() {
             />
           ))
         }
+
+        <h2> Add New Blog </h2>
+        <BlogForm
+          title={title}
+          author={author}
+          url={url}
+          onSubmit={addBlog}
+          onChangeURL={({ target }) => setURL(target.value)}
+          onChangeTitle={({ target }) => setTitle(target.value)}
+          onChangeAuthor={({ target }) => setAuthor(target.value)}
+        />
       </div>
     );
   }
