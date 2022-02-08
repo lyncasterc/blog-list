@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import propTypes from 'prop-types';
 import Input from './Input';
 import Button from './Button';
 
-function BlogForm({
-  title, author, url, onSubmit, onChangeTitle, onChangeAuthor, onChangeURL,
-}) {
+function BlogForm({ createBlog }) {
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [url, setURL] = useState('');
+
+  const addBlog = (e) => {
+    e.preventDefault();
+    createBlog({
+      title,
+      author,
+      url,
+    });
+    setAuthor('');
+    setTitle('');
+    setURL('');
+  };
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={addBlog}>
       <div>
         <Input
           label="Title: "
-          onChange={onChangeTitle}
+          onChange={({ target }) => setTitle(target.value)}
           value={title}
           name="title"
           placeholder="Enter Title"
@@ -21,7 +35,7 @@ function BlogForm({
       <div>
         <Input
           label="Author: "
-          onChange={onChangeAuthor}
+          onChange={({ target }) => setAuthor(target.value)}
           value={author}
           name="author"
           placeholder="Enter Author"
@@ -31,7 +45,7 @@ function BlogForm({
       <div>
         <Input
           label="URL: "
-          onChange={onChangeURL}
+          onChange={({ target }) => setURL(target.value)}
           value={url}
           name="url"
           placeholder="Enter url"
@@ -39,20 +53,14 @@ function BlogForm({
       </div>
 
       <Button
-        buttonText="Add Note"
+        buttonText="Save"
       />
     </form>
   );
 }
 
 BlogForm.propTypes = {
-  title: propTypes.string.isRequired,
-  url: propTypes.string.isRequired,
-  author: propTypes.string.isRequired,
-  onSubmit: propTypes.func.isRequired,
-  onChangeAuthor: propTypes.func.isRequired,
-  onChangeTitle: propTypes.func.isRequired,
-  onChangeURL: propTypes.func.isRequired,
+  createBlog: propTypes.func.isRequired,
 };
 
 export default BlogForm;
