@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import loginService from './services/login';
 import blogService from './services/blogs';
 import LoginForm from './components/LoginForm';
@@ -7,19 +7,18 @@ import Blog from './components/Blog';
 import Button from './components/Button';
 import BlogForm from './components/BlogForm';
 import FlashMessage from './components/FlashMessage';
+import Togglable from './components/Togglable';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setURL] = useState('');
   const [userTokenInfo, setUserTokenInfo] = useState(null);
   const [flash, setFlash] = useState({
     type: '',
     message: '',
   });
+  const blogFormVisibilityRef = useRef();
 
   useEffect(async () => {
     try {
@@ -64,27 +63,15 @@ function App() {
     setUserTokenInfo(null);
   };
 
-  const addBlog = async (e) => {
-    e.preventDefault();
-
-    const newBlog = {
-      title,
-      author,
-      url,
-    };
-
+  const addBlog = async (newBlog) => {
     try {
       const savedBlog = await blogService.create(newBlog);
+      blogFormVisibilityRef.current.toggleVisibility();
       setBlogs(blogs.concat(savedBlog));
-
       setFlash({ type: 'success', message: 'New blog added!' });
       setTimeout(() => {
         setFlash({ type: '', message: '' });
       }, 3000);
-
-      setAuthor('');
-      setURL('');
-      setTitle('');
     } catch (error) {
       console.log(error.message);
     }
@@ -120,15 +107,13 @@ function App() {
         }
 
         <h2> Add New Blog </h2>
-        <BlogForm
-          title={title}
-          author={author}
-          url={url}
-          onSubmit={addBlog}
-          onChangeURL={({ target }) => setURL(target.value)}
-          onChangeTitle={({ target }) => setTitle(target.value)}
-          onChangeAuthor={({ target }) => setAuthor(target.value)}
-        />
+
+        <Togglable buttonLabel="Add blog" ref={blogFormVisibilityRef}>
+          <BlogForm
+            createBlog={addBlog}
+          />
+        </Togglable>
+
       </div>
     );
   }
@@ -148,6 +133,7 @@ function App() {
         setUsername={({ target }) => setUsername(target.value)}
         setPassword={({ target }) => setPassword(target.value)}
       />
+
     </div>
   );
 }
