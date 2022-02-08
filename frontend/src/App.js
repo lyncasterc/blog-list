@@ -101,6 +101,9 @@ function App() {
             <Blog
               title={blog.title}
               author={blog.author}
+              likes={blog.likes}
+              url={blog.url}
+              creator={blog.creator.username}
               key={blog.id}
             />
           ))
