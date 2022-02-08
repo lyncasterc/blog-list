@@ -6,6 +6,7 @@ import LoginForm from './components/LoginForm';
 import Blog from './components/Blog';
 import Button from './components/Button';
 import BlogForm from './components/BlogForm';
+import FlashMessage from './components/FlashMessage';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
@@ -51,7 +52,10 @@ function App() {
       setUsername('');
       setPassword('');
     } catch (error) {
-      console.log(error.message);
+      setFlash({ type: 'error', message: error.message });
+      setTimeout(() => {
+        setFlash({ type: '', message: '' });
+      }, 3000);
     }
   };
 
@@ -72,6 +76,12 @@ function App() {
     try {
       const savedBlog = await blogService.create(newBlog);
       setBlogs(blogs.concat(savedBlog));
+
+      setFlash({ type: 'success', message: 'New blog added!' });
+      setTimeout(() => {
+        setFlash({ type: '', message: '' });
+      }, 3000);
+
       setAuthor('');
       setURL('');
       setTitle('');
@@ -83,6 +93,10 @@ function App() {
   if (userTokenInfo) {
     return (
       <div>
+        <FlashMessage
+          type={flash.type}
+          message={flash.message}
+        />
         <h2> Blogs </h2>
         <p>
           Hello,
@@ -120,13 +134,21 @@ function App() {
   }
 
   return (
-    <LoginForm
-      handleLogin={handleLogin}
-      username={username}
-      password={password}
-      setUsername={({ target }) => setUsername(target.value)}
-      setPassword={({ target }) => setPassword(target.value)}
-    />
+    <div>
+      <FlashMessage
+        type={flash.type}
+        message={flash.message}
+      />
+      <h2> Log In </h2>
+
+      <LoginForm
+        handleLogin={handleLogin}
+        username={username}
+        password={password}
+        setUsername={({ target }) => setUsername(target.value)}
+        setPassword={({ target }) => setPassword(target.value)}
+      />
+    </div>
   );
 }
 

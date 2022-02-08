@@ -1,0 +1,18 @@
+.flash {
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.error { 
+  color: red;
+  background: rgb(233, 182, 182);
+}
+
+.success {
+  color: green;
+  background: rgb(182, 233, 182);
+}
