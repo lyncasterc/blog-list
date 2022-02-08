@@ -77,6 +77,15 @@ function App() {
     }
   };
 
+  const updateLikes = async (targetBlog) => {
+    try {
+      const updatedBlog = await blogService.update(targetBlog);
+      setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (userTokenInfo) {
     return (
       <div>
@@ -103,7 +112,9 @@ function App() {
               author={blog.author}
               likes={blog.likes}
               url={blog.url}
-              creator={blog.creator.username}
+              id={blog.id}
+              updateLikes={updateLikes}
+              creator={userTokenInfo.username}
               key={blog.id}
             />
           ))
