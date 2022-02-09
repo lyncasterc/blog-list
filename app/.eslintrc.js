@@ -16,7 +16,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react',
+    'react', 'jest',
   ],
   rules: {
     'no-console': 0,
