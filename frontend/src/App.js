@@ -86,6 +86,8 @@ function App() {
     }
   };
 
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+
   if (userTokenInfo) {
     return (
       <div>
@@ -106,7 +108,7 @@ function App() {
         </p>
 
         {
-          blogs.map((blog) => (
+          sortedBlogs.map((blog) => (
             <Blog
               title={blog.title}
               author={blog.author}
