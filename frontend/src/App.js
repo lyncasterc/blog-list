@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import './App.css';
 import { useState, useEffect, useRef } from 'react';
 import loginService from './services/login';
@@ -86,6 +87,21 @@ function App() {
     }
   };
 
+  const destroyBlog = async (title, id) => {
+    if (window.confirm(`Delete blog "${title}"?`)) {
+      try {
+        await blogService.destroy(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+        setFlash({ type: 'success', message: 'Blog deleted!' });
+        setTimeout(() => {
+          setFlash({ type: '', message: '' });
+        }, 3000);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
 
   if (userTokenInfo) {
@@ -115,6 +131,7 @@ function App() {
               likes={blog.likes}
               url={blog.url}
               id={blog.id}
+              destroyBlog={destroyBlog}
               updateLikes={updateLikes}
               creator={userTokenInfo.username}
               key={blog.id}

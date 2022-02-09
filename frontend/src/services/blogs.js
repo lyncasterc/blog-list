@@ -39,11 +39,20 @@ const update = async (updatedObject) => {
   }
 };
 
+const destroy = async (id) => {
+  try {
+    await axios.delete(`${baseUrl}/${id}`, config);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const exports = {
   getAll,
   create,
   setToken,
   update,
+  destroy,
 };
 
 export default exports;
