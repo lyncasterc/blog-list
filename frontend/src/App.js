@@ -133,7 +133,8 @@ function App() {
               id={blog.id}
               destroyBlog={destroyBlog}
               updateLikes={updateLikes}
-              creator={userTokenInfo.username}
+              creator={blog.creator.username}
+              currentUser={userTokenInfo.username}
               key={blog.id}
             />
           ))

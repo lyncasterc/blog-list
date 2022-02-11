@@ -4,7 +4,7 @@ import Button from './Button';
 import blogStyles from './Blog.module.css';
 
 function Blog({
-  title, author, likes, url, creator, updateLikes, id, destroyBlog,
+  title, author, likes, url, creator, updateLikes, id, destroyBlog, currentUser,
 }) {
   const [hide, setHide] = useState(true);
   const toggleHide = () => {
@@ -46,7 +46,7 @@ function Blog({
   );
 
   return (
-    <li className={blogStyles.blogItem}>
+    <li className={blogStyles.blogItem} data-cy="blogItem">
       {title}
       {' '}
       by
@@ -56,7 +56,7 @@ function Blog({
       { !hide && blogURL() }
       { !hide && blogCreator() }
       {' '}
-      { !hide && (
+      { !hide && currentUser === creator && (
         <Button
           buttonText="delete"
           onClick={() => destroyBlog(title, id)}
@@ -79,6 +79,7 @@ Blog.propTypes = {
   updateLikes: propTypes.func.isRequired,
   id: propTypes.string.isRequired,
   destroyBlog: propTypes.func.isRequired,
+  currentUser: propTypes.string.isRequired,
 };
 
 export default Blog;
