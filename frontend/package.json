@@ -17,7 +17,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "proxy": "http://localhost:3001",
   "eslintConfig": {
@@ -39,8 +41,10 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^9.4.1",
     "eslint": "^8.8.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jest": "^26.1.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
