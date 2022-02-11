@@ -79,8 +79,8 @@ describe('posting blogs', () => {
   test('can post a valid blog', async () => {
     const startBlogs = await testHelper.blogsInDB();
 
-    const validNote = {
-      title: 'supervalidnote',
+    const validBlog = {
+      title: 'supervalidblog',
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
       likes: 10,
@@ -89,21 +89,41 @@ describe('posting blogs', () => {
     await api
       .post('/api/blogs')
       .set('Authorization', `bearer ${token}`)
-      .send(validNote)
+      .send(validBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
     const allCurrentBlogs = await testHelper.blogsInDB();
     const titles = allCurrentBlogs.map((blog) => blog.title);
 
-    expect(titles).toContainEqual(validNote.title);
+    expect(titles).toContainEqual(validBlog.title);
     expect(titles).toHaveLength(startBlogs.length + 1);
+  });
+
+  test('posting blog returns a blog with creator field populated', async () => {
+    const validBlog = {
+      title: 'supervalidblog',
+      author: 'supervalidauthor',
+      url: 'supervalidurl.com',
+      likes: 10,
+    };
+
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `bearer ${token}`)
+      .send(validBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const savedBlog = response.body;
+    expect(savedBlog.creator.username).toBeDefined();
+    expect(savedBlog.creator.username).toBe(testUser.username);
   });
 
   test('posting blog without token fails with 401', async () => {
     const startBlogs = await testHelper.blogsInDB();
     const note = {
-      title: 'supervalidnote',
+      title: 'supervalidblog',
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
       likes: 10,
@@ -124,7 +144,7 @@ describe('posting blogs', () => {
   test('posting blog with missing url fails with 400', async () => {
     const startBlogs = await testHelper.blogsInDB();
     const invalidBlog = {
-      title: 'supervalidnote',
+      title: 'supervalidblog',
       author: 'supervalidauthor',
       likes: 10,
     };
@@ -160,15 +180,15 @@ describe('posting blogs', () => {
   });
 
   test('blog posted with no like property is set to 0 likes', async () => {
-    const validNote = {
-      title: 'supervalidnote',
+    const validBlog = {
+      title: 'supervalidblog',
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
     };
     const response = await api
       .post('/api/blogs')
       .set('Authorization', `bearer ${token}`)
-      .send(validNote);
+      .send(validBlog);
 
     const savedNote = response.body;
     expect(savedNote.likes).toBe(0);
