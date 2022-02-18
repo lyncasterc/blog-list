@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import propTypes from 'prop-types';
 import { createBlog } from '../reducers/blogReducer';
+import { setFlashMessage } from '../reducers/flashMessageReducer';
 import Input from './Input';
 import Button from './Button';
 
@@ -13,11 +14,13 @@ function BlogForm({ toggleVisibility }) {
 
   const addBlog = (e) => {
     e.preventDefault();
+    dispatch(setFlashMessage({ type: 'success', message: 'New blog added!' }, 5));
     dispatch(createBlog({
       title,
       author,
       url,
     }));
+
     toggleVisibility();
     setAuthor('');
     setTitle('');

@@ -1,8 +1,10 @@
 import React from 'react';
-import propTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import flashStyles from './FlashMessage.module.css';
 
-function FlashMessage({ type, message }) {
+function FlashMessage() {
+  const { type, message } = useSelector((state) => state.flashMessages);
+
   if (message === '') {
     return null;
   }
@@ -12,15 +14,5 @@ function FlashMessage({ type, message }) {
     </div>
   );
 }
-
-FlashMessage.propTypes = {
-  type: propTypes.string,
-  message: propTypes.string,
-};
-
-FlashMessage.defaultProps = {
-  type: '',
-  message: '',
-};
 
 export default FlashMessage;

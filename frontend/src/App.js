@@ -18,10 +18,6 @@ function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [userTokenInfo, setUserTokenInfo] = useState(null);
-  const [flash, setFlash] = useState({
-    type: '',
-    message: '',
-  });
 
   useEffect(() => {
     dispatch(initalizeBlogs());
@@ -49,10 +45,10 @@ function App() {
       setUsername('');
       setPassword('');
     } catch (error) {
-      setFlash({ type: 'error', message: error.message });
-      setTimeout(() => {
-        setFlash({ type: '', message: '' });
-      }, 3000);
+      // setFlash({ type: 'error', message: error.message });
+      // setTimeout(() => {
+      //   setFlash({ type: '', message: '' });
+      // }, 3000);
     }
   };
 
@@ -104,10 +100,7 @@ function App() {
   if (userTokenInfo) {
     return (
       <div>
-        <FlashMessage
-          type={flash.type}
-          message={flash.message}
-        />
+        <FlashMessage />
         <h2> Blogs </h2>
         <p>
           Hello,
@@ -140,7 +133,7 @@ function App() {
         <h2> Add New Blog </h2>
 
         <Togglable buttonLabel="Add blog">
-          <BlogForm />
+          <BlogForm toggleVisibility={() => {}} />
         </Togglable>
 
       </div>
@@ -149,10 +142,7 @@ function App() {
 
   return (
     <div>
-      <FlashMessage
-        type={flash.type}
-        message={flash.message}
-      />
+      <FlashMessage />
       <h2> Log In </h2>
 
       <LoginForm
