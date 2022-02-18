@@ -58,16 +58,19 @@ describe('Blog app', () => {
       cy.login({ username: 'admin', password: 'secret' });
     });
 
-    it('a blog can be created', () => {
+    it.only('a blog can be created', () => {
       cy.contains('Add blog').click();
       cy.contains('Title: ').find('input').type('test title');
       cy.contains('Author: ').find('input').type('test author');
       cy.contains('URL: ').find('input').type('testurl.com');
-      cy.contains('Save').click();
+      cy.contains('Save').as('saveBtn').click();
 
       cy.contains('test title by test author');
+      cy.get('@saveBtn').should('not.be.visible');
       cy.contains('New blog added!');
     });
+
+    it('blog form is hidden when blog is created');
 
     describe('when blogs exist', () => {
       beforeEach(() => {
@@ -125,7 +128,7 @@ describe('Blog app', () => {
           .should('not.exist');
       });
 
-      it.only('blogs are sorted by likes in ascending order', () => {
+      it('blogs are sorted by likes in ascending order', () => {
         cy.get('[data-cy=blogItem]')
           .then((blogs) => {
             expect(blogs[0]).to.contain.text('title 1');
