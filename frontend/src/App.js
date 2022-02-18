@@ -1,8 +1,10 @@
 /* eslint-disable no-alert */
 import './App.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import loginService from './services/login';
 import blogService from './services/blogs';
+import { initalizeBlogs } from './reducers/blogReducer';
 import LoginForm from './components/LoginForm';
 import Blog from './components/Blog';
 import Button from './components/Button';
@@ -11,7 +13,8 @@ import FlashMessage from './components/FlashMessage';
 import Togglable from './components/Togglable';
 
 function App() {
-  const [blogs, setBlogs] = useState([]);
+  const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [userTokenInfo, setUserTokenInfo] = useState(null);
@@ -19,16 +22,10 @@ function App() {
     type: '',
     message: '',
   });
-  const blogFormVisibilityRef = useRef();
 
-  useEffect(async () => {
-    try {
-      const initialBlogs = await blogService.getAll();
-      setBlogs(initialBlogs);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  useEffect(() => {
+    dispatch(initalizeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const JSONTokenInfo = localStorage.getItem('bloglistAppUser');
@@ -64,43 +61,43 @@ function App() {
     setUserTokenInfo(null);
   };
 
-  const addBlog = async (newBlog) => {
-    try {
-      const savedBlog = await blogService.create(newBlog);
-      blogFormVisibilityRef.current.toggleVisibility();
-      setBlogs(blogs.concat(savedBlog));
-      setFlash({ type: 'success', message: 'New blog added!' });
-      setTimeout(() => {
-        setFlash({ type: '', message: '' });
-      }, 3000);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  // const addBlog = async (newBlog) => {
+  //   try {
+  //     const savedBlog = await blogService.create(newBlog);
+  //     blogFormVisibilityRef.current.toggleVisibility();
+  //     setBlogs(blogs.concat(savedBlog));
+  //     setFlash({ type: 'success', message: 'New blog added!' });
+  //     setTimeout(() => {
+  //       setFlash({ type: '', message: '' });
+  //     }, 3000);
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
-  const updateLikes = async (targetBlog) => {
-    try {
-      const updatedBlog = await blogService.update(targetBlog);
-      setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const updateLikes = async (targetBlog) => {
+  //   try {
+  //     const updatedBlog = await blogService.update(targetBlog);
+  //     setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const destroyBlog = async (title, id) => {
-    if (window.confirm(`Delete blog "${title}"?`)) {
-      try {
-        await blogService.destroy(id);
-        setBlogs(blogs.filter((blog) => blog.id !== id));
-        setFlash({ type: 'success', message: 'Blog deleted!' });
-        setTimeout(() => {
-          setFlash({ type: '', message: '' });
-        }, 3000);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
+  // const destroyBlog = async (title, id) => {
+  //   if (window.confirm(`Delete blog "${title}"?`)) {
+  //     try {
+  //       await blogService.destroy(id);
+  //       setBlogs(blogs.filter((blog) => blog.id !== id));
+  //       setFlash({ type: 'success', message: 'Blog deleted!' });
+  //       setTimeout(() => {
+  //         setFlash({ type: '', message: '' });
+  //       }, 3000);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
 
@@ -131,8 +128,8 @@ function App() {
               likes={blog.likes}
               url={blog.url}
               id={blog.id}
-              destroyBlog={destroyBlog}
-              updateLikes={updateLikes}
+              // destroyBlog={destroyBlog}
+              // updateLikes={updateLikes}
               creator={blog.creator.username}
               currentUser={userTokenInfo.username}
               key={blog.id}
@@ -142,10 +139,8 @@ function App() {
 
         <h2> Add New Blog </h2>
 
-        <Togglable buttonLabel="Add blog" ref={blogFormVisibilityRef}>
-          <BlogForm
-            createBlog={addBlog}
-          />
+        <Togglable buttonLabel="Add blog">
+          <BlogForm />
         </Togglable>
 
       </div>
