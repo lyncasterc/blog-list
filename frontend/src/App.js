@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import loginService from './services/login';
 import blogService from './services/blogs';
 import { initalizeBlogs } from './reducers/blogReducer';
+import { setFlashMessage } from './reducers/flashMessageReducer';
 import LoginForm from './components/LoginForm';
 import Blog from './components/Blog';
 import Button from './components/Button';
@@ -45,10 +46,7 @@ function App() {
       setUsername('');
       setPassword('');
     } catch (error) {
-      // setFlash({ type: 'error', message: error.message });
-      // setTimeout(() => {
-      //   setFlash({ type: '', message: '' });
-      // }, 3000);
+      dispatch(setFlashMessage({ type: 'error', message: error.message }, 5));
     }
   };
 
