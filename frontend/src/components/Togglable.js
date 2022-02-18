@@ -1,7 +1,7 @@
-import React, { useState, useImperativeHandle } from 'react';
+import React, { useState } from 'react';
 import propTypes from 'prop-types';
 
-const Togglable = React.forwardRef((props, ref) => {
+function Togglable({ buttonLabel, children }) {
   const [visible, setVisible] = useState(false);
   const hideWhenVisible = { display: visible ? 'none' : '' };
   const showWhenVisible = { display: visible ? '' : 'none' };
@@ -9,25 +9,21 @@ const Togglable = React.forwardRef((props, ref) => {
     setVisible(!visible);
   };
 
-  useImperativeHandle(ref, () => ({
-    toggleVisibility,
-  }));
-
   return (
     <div>
       <button type="submit" onClick={toggleVisibility} style={hideWhenVisible}>
         {' '}
-        {props.buttonLabel}
+        {buttonLabel}
         {' '}
       </button>
 
       <div style={showWhenVisible}>
-        {props.children}
+        { React.cloneElement(children, { toggleVisibility }) }
         <button type="submit" onClick={toggleVisibility}> Cancel </button>
       </div>
     </div>
   );
-});
+}
 
 Togglable.propTypes = {
   buttonLabel: propTypes.string.isRequired,
