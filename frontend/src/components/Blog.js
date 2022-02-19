@@ -4,7 +4,7 @@ import Button from './Button';
 import blogStyles from './Blog.module.css';
 
 function Blog({
-  title, author, likes, url, creator, updateLikes, id, destroyBlog, currentUser,
+  title, author, likes, url, creator, updateLikes, destroyBlog, currentUser,
 }) {
   const [hide, setHide] = useState(true);
   const toggleHide = () => {
@@ -18,15 +18,7 @@ function Blog({
       {' '}
       <Button
         buttonText="like"
-        onClick={() => {
-          updateLikes({
-            title,
-            author,
-            url,
-            id,
-            likes: likes + 1,
-          });
-        }}
+        onClick={updateLikes}
       />
     </div>
   );
@@ -59,7 +51,7 @@ function Blog({
       { !hide && currentUser === creator && (
         <Button
           buttonText="delete"
-          onClick={() => destroyBlog(title, id)}
+          onClick={destroyBlog}
         />
       ) }
       <Button
@@ -77,7 +69,6 @@ Blog.propTypes = {
   url: propTypes.string.isRequired,
   creator: propTypes.string.isRequired,
   updateLikes: propTypes.func.isRequired,
-  id: propTypes.string.isRequired,
   destroyBlog: propTypes.func.isRequired,
   currentUser: propTypes.string.isRequired,
 };
