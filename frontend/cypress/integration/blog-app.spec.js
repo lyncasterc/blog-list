@@ -58,7 +58,7 @@ describe('Blog app', () => {
       cy.login({ username: 'admin', password: 'secret' });
     });
 
-    it.only('a blog can be created', () => {
+    it('a blog can be created', () => {
       cy.contains('Add blog').click();
       cy.contains('Title: ').find('input').type('test title');
       cy.contains('Author: ').find('input').type('test author');
@@ -69,8 +69,6 @@ describe('Blog app', () => {
       cy.get('@saveBtn').should('not.be.visible');
       cy.contains('New blog added!');
     });
-
-    it('blog form is hidden when blog is created');
 
     describe('when blogs exist', () => {
       beforeEach(() => {
@@ -94,6 +92,13 @@ describe('Blog app', () => {
         cy.contains('likes: 1');
       });
 
+      it.only('username of creator is visible after liking/updating blog', () => {
+        cy.contains('show').click();
+        cy.contains('like').click();
+        cy.contains('likes: 1');
+        cy.contains('admin');
+      });
+
       it('user can delete their own blog', () => {
         cy.contains('title 1')
           .as('userBlog')
@@ -105,6 +110,7 @@ describe('Blog app', () => {
           .click();
 
         cy.contains('Blog deleted!');
+        cy.get('@userBlog').should('not.exist');
         cy.reload();
         cy.get('@userBlog').should('not.exist');
       });
