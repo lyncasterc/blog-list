@@ -31,8 +31,10 @@ describe('Blog app', () => {
         .find('button')
         .click();
 
-      cy.contains('Blogs');
+      cy.contains(/add new blog/i);
       cy.contains('Hello, Superuser');
+      cy.contains(/log out/i);
+      cy.contains(/add blog/i);
     });
 
     it('login fails with wrong password', () => {
@@ -92,7 +94,7 @@ describe('Blog app', () => {
         cy.contains('likes: 1');
       });
 
-      it.only('username of creator is visible after liking/updating blog', () => {
+      it('username of creator is visible after liking/updating blog', () => {
         cy.contains('show').click();
         cy.contains('like').click();
         cy.contains('likes: 1');
