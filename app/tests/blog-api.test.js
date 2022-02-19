@@ -273,4 +273,26 @@ describe('updating blogs', () => {
     const retrievedBlog = (await Blog.findById(targetBlog.id)).toJSON();
     expect(updatedBlog).toEqual(retrievedBlog);
   });
+
+  test('updated blog has populated creator field', async () => {
+    const targetBlog = (await testHelper.blogsInDB())[0];
+    const updatedBlog = {
+      title: targetBlog.title,
+      author: targetBlog.author,
+      url: targetBlog.url,
+      likes: targetBlog.likes += 3,
+      id: targetBlog.id,
+      creator: targetBlog.creator,
+    };
+
+    const response = await api
+      .put(`/api/blogs/${targetBlog.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const retrievedBlog = response.body;
+    expect(retrievedBlog.creator).toBeDefined();
+    expect(retrievedBlog.creator.username).toBe(testUser.username);
+  });
 });
