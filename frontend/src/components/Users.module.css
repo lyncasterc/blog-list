@@ -1,9 +1,17 @@
-.user-item {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+h2 {
+  font-size: 2rem;
+}
+h3 {
+  text-align: right;
 }
 
-.blogs-created { 
-  text-align: right;
+.user-item {
+  gap: 10px;
+  width: 61.5%;
+  justify-content: space-between;
+}
+
+.users-list {
+  margin-top: 3.5rem;
+  width: 250px;
 }
