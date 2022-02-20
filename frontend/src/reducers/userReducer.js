@@ -16,7 +16,7 @@ export default userSlice.reducer;
 
 export const { setUsers } = userSlice.actions;
 
-export const initalizeUsers = () => {
+export const initializeUsers = () => {
   return async (dispatch) => {
     try {
       const users = await userService.getAll();
