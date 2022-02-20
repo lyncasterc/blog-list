@@ -1,14 +1,19 @@
 import './App.css';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Routes,
+  Route,
+} from 'react-router-dom';
 import { initalizeBlogs } from './reducers/blogReducer';
-import { initalizeCurrentUser, logoutUser } from './reducers/currentUserReducer';
+import { initalizeCurrentUser } from './reducers/currentUserReducer';
 import LoginForm from './components/LoginForm';
 import Blogs from './components/Blogs';
-import Button from './components/Button';
 import BlogForm from './components/BlogForm';
 import FlashMessage from './components/FlashMessage';
 import Togglable from './components/Togglable';
+import Navbar from './components/Navbar';
+import Users from './components/Users';
 
 function App() {
   const dispatch = useDispatch();
@@ -24,18 +29,15 @@ function App() {
 
   if (currentUser.token) {
     return (
-      <div>
+      <div className="container">
         <FlashMessage />
-        <p>
-          Hello,
-          {' '}
-          {currentUser.name}
-          {' '}
-          <Button
-            buttonText="Log out"
-            onClick={() => dispatch(logoutUser())}
-          />
-        </p>
+
+        <Navbar />
+        <Routes>
+          <Route path="/" />
+          <Route path="/blogs" />
+          <Route path="/users" element={<Users />} />
+        </Routes>
 
         <Blogs
           currentUser={currentUser.username}
