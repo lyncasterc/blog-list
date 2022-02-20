@@ -1,0 +1,9 @@
+.user-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.blogs-created { 
+  text-align: right;
+}
