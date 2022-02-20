@@ -55,6 +55,18 @@ describe('Blog app', () => {
     });
   });
 
+  describe('Logging out', () => {
+    beforeEach(() => {
+      cy.login({ username: 'admin', password: 'secret' });
+    });
+
+    it('logged in user can log out', () => {
+      cy.contains(/log out/i).click();
+      cy.contains(/log out/i).should('not.exist');
+      cy.contains(/log in/i);
+    });
+  });
+
   describe('when logged in', () => {
     beforeEach(() => {
       cy.login({ username: 'admin', password: 'secret' });
