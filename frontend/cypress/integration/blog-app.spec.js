@@ -31,10 +31,9 @@ describe('Blog app', () => {
         .find('button')
         .click();
 
-      cy.contains(/add new blog/i);
-      cy.contains('Hello, Superuser');
+      cy.contains(/Superuser/);
       cy.contains(/log out/i);
-      cy.contains(/add blog/i);
+      cy.get('[data-cy=navbar]');
     });
 
     it('login fails with wrong password', () => {
@@ -82,6 +81,38 @@ describe('Blog app', () => {
       cy.contains('test title by test author');
       cy.get('@saveBtn').should('not.be.visible');
       cy.contains('New blog added!');
+    });
+
+    describe('when navigating through navbar', () => {
+      it('user can view users page', () => {
+        cy.contains(/users/i).click();
+        cy.url().should('include', '/users');
+      });
+
+      describe('Users page', () => {
+        describe('when there are multiple users', () => {
+          beforeEach(() => {
+            cy.createUser({
+              name: 'Superuser2',
+              username: 'admin2',
+              password: 'secret',
+            });
+            cy.createUser({
+              name: 'Superuser3',
+              username: 'admin3',
+              password: 'secret',
+            });
+            cy.visit('http://localhost:3000/users');
+          });
+
+          it.only('user can view a list of users', () => {
+            cy.get('[data-cy=user-item]')
+              .then((users) => {
+                expect(users.length).to.equal(3);
+              });
+          });
+        });
+      });
     });
 
     describe('when blogs exist', () => {

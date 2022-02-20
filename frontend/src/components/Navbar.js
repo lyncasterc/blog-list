@@ -10,7 +10,7 @@ function Navbar() {
   const currentUser = useSelector((state) => state.currentUser);
 
   return (
-    <div className={navbarStyles.navbar}>
+    <div className={navbarStyles.navbar} data-cy="navbar">
       <Link to="/blogs"> Blogs </Link>
       <Link to="/users"> Users </Link>
       <p>
