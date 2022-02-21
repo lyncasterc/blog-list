@@ -131,11 +131,11 @@ describe('when mutiple users are in database', () => {
     });
   });
 
-  describe('when user posts a blog', () => {
+  describe('when a user posts a blog', () => {
     beforeEach(async () => {
       const user = await User.findOne({ username: 'admin' });
       const blog = {
-        title: 'cool title ',
+        title: 'cool title',
         author: 'cool author',
         url: 'cool.com',
         likes: 0,
@@ -153,10 +153,26 @@ describe('when mutiple users are in database', () => {
         .send(blog);
     });
 
-    test.only('blog is added to the user notes array', async () => {
+    test('blog is added to the user blogs array', async () => {
       const user = await User.findOne({ username: 'admin' });
       expect(user.blogs).toBeDefined();
       expect(user.blogs).toHaveLength(1);
+    });
+
+    test.only('fetched user has a populated blogs array', async () => {
+      const user = await User.findOne({ username: 'admin' });
+      const response = await api
+        .get(`/api/users/${user.id}`)
+        .expect(200);
+
+      const retrievedUser = response.body;
+
+      expect(retrievedUser.blogs).toBeDefined();
+
+      const firstBlog = retrievedUser.blogs[0];
+
+      expect(firstBlog).toBeInstanceOf(Object);
+      expect(firstBlog.title).toContain('cool title');
     });
   });
 });
