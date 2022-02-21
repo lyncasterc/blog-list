@@ -33,7 +33,7 @@ beforeEach(async () => {
 afterAll(async () => { await testDB.close(); });
 
 describe('when mutiple users are in database', () => {
-  describe('when getting users', () => {
+  describe('when getting all users', () => {
     test('all saved users are returned', async () => {
       const startUsers = await testHelper.usersInDB();
       const response = await api
@@ -48,6 +48,21 @@ describe('when mutiple users are in database', () => {
         .get('/api/users')
         .expect(200)
         .expect('Content-Type', /application\/json/);
+    });
+  });
+
+  describe('when getting a single user', () => {
+    test('correct user is returned', async () => {
+      const targetUser = await User.findOne({ username: 'admin' });
+
+      const response = await api
+        .get(`/api/users/${targetUser.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      const retrievedUser = response.body;
+      expect(retrievedUser.id).toBe(targetUser.id);
+      expect(retrievedUser.username).toBe(targetUser.username);
     });
   });
 
@@ -118,17 +133,23 @@ describe('when mutiple users are in database', () => {
 
   describe('when user posts a blog', () => {
     beforeEach(async () => {
-      const { id } = await User.findOne({ username: 'admin' });
+      const user = await User.findOne({ username: 'admin' });
       const blog = {
         title: 'cool title ',
         author: 'cool author',
         url: 'cool.com',
         likes: 0,
-        userID: id,
       };
+
+      const tokenResponse = await api
+        .post('/api/login')
+        .send({ username: user.username, password: 'secret' });
+
+      const { token } = tokenResponse.body;
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(blog);
     });
 
