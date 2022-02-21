@@ -11,7 +11,7 @@ function Navbar() {
 
   return (
     <div className={navbarStyles.navbar} data-cy="navbar">
-      <Link to="/blogs"> Blogs </Link>
+      <Link to="/"> Blogs </Link>
       <Link to="/users"> Users </Link>
       <p>
         {' '}
