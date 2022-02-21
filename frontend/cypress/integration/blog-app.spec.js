@@ -90,6 +90,10 @@ describe('Blog app', () => {
       });
 
       describe('Users page', () => {
+        beforeEach(() => {
+          cy.visit('http://localhost:3000/users');
+        });
+
         describe('when there are multiple users', () => {
           beforeEach(() => {
             cy.createUser({
@@ -97,18 +101,59 @@ describe('Blog app', () => {
               username: 'admin2',
               password: 'secret',
             });
+
             cy.createUser({
               name: 'Superuser3',
               username: 'admin3',
               password: 'secret',
             });
-            cy.visit('http://localhost:3000/users');
+
+            cy.reload();
           });
 
-          it.only('user can view a list of users', () => {
+          it('user can view a list of users', () => {
             cy.get('[data-cy=user-item]')
               .then((users) => {
                 expect(users.length).to.equal(3);
+              });
+          });
+
+          it('user can click on a user', () => {
+            cy
+              .get('[data-cy=user-item]')
+              .first()
+              .find('a')
+              .click();
+          });
+        });
+
+        describe('when user has clicked on a user', () => {
+          beforeEach(() => {
+            cy.createBlog({
+              title: 'title 1',
+              author: 'author 1',
+              url: 'url1.com',
+            });
+
+            cy.createBlog({
+              title: 'title 2',
+              author: 'author 2',
+              url: 'url2.com',
+            });
+
+            cy.visit('http://localhost:3000/users');
+            cy
+              .get('[data-cy=user-item]')
+              .first()
+              .find('a')
+              .click();
+            cy.reload();
+          });
+
+          it.only('the user can view all of the clicked users posts', () => {
+            cy.get('[data-cy=user-blog-item]')
+              .then((blogs) => {
+                expect(blogs.length).to.equal(2);
               });
           });
         });
