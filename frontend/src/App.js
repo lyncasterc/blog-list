@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Routes,
   Route,
+  Outlet,
 } from 'react-router-dom';
 import { initalizeBlogs } from './reducers/blogReducer';
+import { initializeUsers } from './reducers/userReducer';
 import { initalizeCurrentUser } from './reducers/currentUserReducer';
 import LoginForm from './components/LoginForm';
 import Blogs from './components/Blogs';
@@ -14,6 +16,7 @@ import FlashMessage from './components/FlashMessage';
 import Togglable from './components/Togglable';
 import Navbar from './components/Navbar';
 import Users from './components/Users';
+import User from './components/User';
 
 function App() {
   const dispatch = useDispatch();
@@ -21,6 +24,7 @@ function App() {
 
   useEffect(() => {
     dispatch(initalizeBlogs());
+    dispatch(initializeUsers());
   }, [dispatch]);
 
   useEffect(() => {
@@ -34,14 +38,20 @@ function App() {
 
         <Navbar />
         <Routes>
-          <Route path="/" />
-          <Route path="/blogs" />
-          <Route path="/users" element={<Users />} />
-        </Routes>
+          <Route
+            path="/"
+            element={(
+              <Blogs
+                currentUser={currentUser.username}
+              />
+            )}
+          />
+          <Route path="users" element={<Outlet />}>
+            <Route index element={<Users />} />
+            <Route path=":userId" element={<User />} />
+          </Route>
 
-        <Blogs
-          currentUser={currentUser.username}
-        />
+        </Routes>
 
         <h2> Add New Blog </h2>
 
