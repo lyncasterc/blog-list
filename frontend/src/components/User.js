@@ -7,28 +7,30 @@ function User() {
   const filteredUsers = useSelector((state) => state.users.filter((user) => user.id === userId));
   const user = filteredUsers[0];
 
-  return (
-    <div className="container">
-      <h2>{user.name}</h2>
-      <p>
-        <strong>
-          added blogs
-        </strong>
-      </p>
+  if (user) {
+    return (
+      <div className="container">
+        <h2>{user.name}</h2>
+        <p>
+          <strong>
+            added blogs
+          </strong>
+        </p>
 
-      <ul>
-
-        {
+        <ul>
+          {
             user.blogs.map((blog) => (
               <li key={blog.id} data-cy="user-blog-item">
                 { blog.title }
               </li>
             ))
           }
+        </ul>
+      </div>
+    );
+  }
 
-      </ul>
-    </div>
-  );
+  return (null);
 }
 
 export default User;
