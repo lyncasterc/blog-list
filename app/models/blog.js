@@ -7,17 +7,29 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Blog must have a title!'],
   },
+
   author: String,
+
   url: {
     type: String,
     required: [true, 'Link a URL to this blog!'],
   },
+
   likes: Number,
+
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Only valid users can add blogs!'],
   },
+
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment',
+      required: false,
+    },
+  ],
 });
 
 blogSchema.set('toJSON', {
