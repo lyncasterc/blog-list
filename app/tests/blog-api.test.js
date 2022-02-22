@@ -73,6 +73,26 @@ describe('when there are blogs initially in database', () => {
 
     expect(response.body).toHaveLength(startBlogs.length);
   });
+
+  test('getting blogs that had comments have comment populated', async () => {
+    const targetBlog = (await testHelper.blogsInDB())[0];
+    await api
+      .post(`/api/blogs/${targetBlog.id}/comments`)
+      .set('Authorization', `bearer ${token}`)
+      .send({ content: 'a comment' });
+
+    const response = await api
+      .get('/api/blogs')
+      .expect(200);
+
+    const retrievedBlogs = response.body;
+    const retrievedTargetBlog = retrievedBlogs.find((blog) => blog.id === targetBlog.id);
+
+    const comment = retrievedTargetBlog.comments[0];
+
+    expect(comment.content).toBeDefined();
+    expect(comment.content).toBe('a comment');
+  });
 });
 
 describe('posting blogs', () => {
@@ -122,7 +142,7 @@ describe('posting blogs', () => {
 
   test('posting blog without token fails with 401', async () => {
     const startBlogs = await testHelper.blogsInDB();
-    const note = {
+    const blog = {
       title: 'supervalidblog',
       author: 'supervalidauthor',
       url: 'supervalidurl.com',
@@ -131,7 +151,7 @@ describe('posting blogs', () => {
 
     const response = await api
       .post('/api/blogs')
-      .send(note)
+      .send(blog)
       .expect(401)
       .expect('Content-Type', /application\/json/);
 
