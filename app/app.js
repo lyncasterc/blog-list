@@ -6,6 +6,7 @@ const testDB = require('./tests/test-db');
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
 const loginRouter = require('./controllers/login');
+const commentRouter = require('./controllers/comments');
 const testingRouter = require('./controllers/testing');
 
 const app = express();
@@ -35,6 +36,7 @@ app.use(middleware.requestLogger);
 
 app.use(middleware.tokenExtractor);
 app.use('/api/blogs', blogsRouter);
+blogsRouter.use('/:blogId/comments', commentRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 if (process.env.NODE_ENV === 'test') {
