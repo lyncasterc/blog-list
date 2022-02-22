@@ -17,6 +17,7 @@ import Togglable from './components/Togglable';
 import Navbar from './components/Navbar';
 import Users from './components/Users';
 import User from './components/User';
+import BlogView from './components/BlogView';
 
 function App() {
   const dispatch = useDispatch();
@@ -46,10 +47,13 @@ function App() {
               />
             )}
           />
+
           <Route path="users" element={<Outlet />}>
             <Route index element={<Users />} />
             <Route path=":userId" element={<User />} />
           </Route>
+
+          <Route path="blogs/:blogId" element={<BlogView />} />
 
         </Routes>
 
