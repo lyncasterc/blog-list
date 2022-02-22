@@ -159,7 +159,7 @@ describe('when mutiple users are in database', () => {
       expect(user.blogs).toHaveLength(1);
     });
 
-    test.only('fetched user has a populated blogs array', async () => {
+    test('fetched user has a populated blogs array', async () => {
       const user = await User.findOne({ username: 'admin' });
       const response = await api
         .get(`/api/users/${user.id}`)
