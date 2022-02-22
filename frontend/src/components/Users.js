@@ -1,14 +1,9 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { initializeUsers } from '../reducers/userReducer';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import usersStyles from './Users.module.css';
 
 function Users() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(initializeUsers());
-  }, [dispatch]);
-
   const users = useSelector((state) => [...state.users].sort((a, b) => a.name - b.name));
 
   return (
@@ -25,13 +20,18 @@ function Users() {
             className={`${usersStyles['user-item']} flex`}
             data-cy="user-item"
           >
-            <p>{user.name}</p>
+            <Link to={`/users/${user.id}`}>
+              {' '}
+              { user.name }
+              {' '}
+            </Link>
             {' '}
             <p>{user.blogs.length}</p>
           </div>
         ))
       }
       </div>
+
     </div>
   );
 }
