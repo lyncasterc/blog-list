@@ -26,6 +26,7 @@ function Blogs({ currentUser }) {
             author={blog.author}
             likes={blog.likes}
             url={blog.url}
+            blogId={blog.id}
             destroyBlog={() => handleDestroyBlog(blog.title, blog.id)}
             updateLikes={() => dispatch((likeBlog(blog)))}
             creator={blog.creator.username}

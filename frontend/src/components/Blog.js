@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import propTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import Button from './Button';
 import blogStyles from './Blog.module.css';
 
 function Blog({
-  title, author, likes, url, creator, updateLikes, destroyBlog, currentUser,
+  title, author, likes, url, blogId, creator, updateLikes, destroyBlog, currentUser,
 }) {
   const [hide, setHide] = useState(true);
   const toggleHide = () => {
@@ -39,11 +40,13 @@ function Blog({
 
   return (
     <li className={blogStyles.blogItem} data-cy="blogItem">
-      {title}
-      {' '}
-      by
-      {' '}
-      {author}
+      <Link to={`/blogs/${blogId}`}>
+        {title}
+        {' '}
+        by
+        {' '}
+        {author}
+      </Link>
       { !hide && blogLikes() }
       { !hide && blogURL() }
       { !hide && blogCreator() }
@@ -67,6 +70,7 @@ Blog.propTypes = {
   author: propTypes.string.isRequired,
   likes: propTypes.number.isRequired,
   url: propTypes.string.isRequired,
+  blogId: propTypes.string.isRequired,
   creator: propTypes.string.isRequired,
   updateLikes: propTypes.func.isRequired,
   destroyBlog: propTypes.func.isRequired,
