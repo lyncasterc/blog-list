@@ -190,8 +190,75 @@ describe('posting blogs', () => {
       .set('Authorization', `bearer ${token}`)
       .send(validBlog);
 
-    const savedNote = response.body;
-    expect(savedNote.likes).toBe(0);
+    const savedBlog = response.body;
+    expect(savedBlog.likes).toBe(0);
+  });
+});
+
+describe('posting a comment to a blog', () => {
+  describe('valid comment post requests', () => {
+    test('returns the comment', async () => {
+      const targetBlog = (await testHelper.blogsInDB())[0];
+      const comment = { content: 'hey, a comment!' };
+
+      const response = await api
+        .post(`/api/blogs/${targetBlog.id}/comments`)
+        .set('Authorization', `bearer ${token}`)
+        .send(comment)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+      const returnedComment = response.body;
+
+      expect(returnedComment).toBeDefined();
+      expect(returnedComment.content).toEqual(comment.content);
+    });
+
+    test('adds the comment to the blogs comments array', async () => {
+      const targetBlog = (await testHelper.blogsInDB())[0];
+      const comment = { content: 'hey, a comment!' };
+
+      await api
+        .post(`/api/blogs/${targetBlog.id}/comments`)
+        .set('Authorization', `bearer ${token}`)
+        .send(comment);
+
+      const updatedBlog = await Blog.findById(targetBlog.id);
+
+      expect(updatedBlog.comments.length).toBe(1);
+    });
+  });
+
+  describe('invalid comment post requests', () => {
+    test('fails with 401 if comment is posted without token', async () => {
+      const startBlog = (await testHelper.blogsInDB())[0];
+      const comment = { content: 'hey, a comment!' };
+
+      const response = await api
+        .post(`/api/blogs/${startBlog.id}/comments`)
+        .send(comment)
+        .expect(401);
+
+      const endBlog = await Blog.findById(startBlog.id);
+
+      expect(response.body.error).toBe('token missing or invalid');
+      expect(endBlog.comments.length).toBe(0);
+    });
+
+    test('comment without content fails with 400', async () => {
+      const startBlog = (await testHelper.blogsInDB())[0];
+
+      const response = await api
+        .post(`/api/blogs/${startBlog.id}/comments`)
+        .set('Authorization', `bearer ${token}`)
+        .send({})
+        .expect(400);
+
+      const endBlog = await Blog.findById(startBlog.id);
+
+      expect(response.body.error).toMatch(/comment can't be empty!/);
+      expect(endBlog.comments.length).toBe(0);
+    });
   });
 });
 
