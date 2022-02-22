@@ -150,7 +150,7 @@ describe('Blog app', () => {
             cy.reload();
           });
 
-          it.only('the user can view all of the clicked users posts', () => {
+          it('the user can view all of the clicked users posts', () => {
             cy.get('[data-cy=user-blog-item]')
               .then((blogs) => {
                 expect(blogs.length).to.equal(2);
@@ -244,6 +244,14 @@ describe('Blog app', () => {
             expect(blogs[0]).to.contain.text('title 2');
             expect(blogs[0]).to.contain.text('likes: 1');
           });
+      });
+
+      describe('Blog page', () => {
+        it.only('user can click on a blog and get to its page', () => {
+          cy.contains('title 1')
+            .find('a')
+            .click();
+        });
       });
     });
   });

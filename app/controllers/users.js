@@ -7,13 +7,18 @@ usersRouter.get('/', async (request, response) => {
   response.json(users);
 });
 
-usersRouter.get('/:id', async (request, response) => {
+usersRouter.get('/:id', async (request, response, next) => {
   const { id } = request.params;
-  const user = await User.findById(id);
-  if (!user) return response.status(404).end();
 
-  await user.populate('blogs', { title: 1, author: 1, likes: 1 });
-  response.send(user);
+  try {
+    const user = await User.findById(id);
+    if (!user) return response.status(404).end();
+
+    await user.populate('blogs', { title: 1, author: 1, likes: 1 });
+    response.send(user);
+  } catch (error) {
+    next(error);
+  }
 });
 
 usersRouter.post('/', async (request, response, next) => {

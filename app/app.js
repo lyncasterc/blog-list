@@ -22,11 +22,11 @@ if (process.env.NODE_ENV === 'production') {
     .catch((error) => {
       logger.error('Error connecting to MongoDB: ', error.message);
     });
-// }  else if (process.env.NODE_ENV === 'development') {
-  // testDB.connect();
-} else {
+} else if (process.env.NODE_ENV === 'development') {
   testDB.connect();
-}
+} // else {
+//  testDB.connect();
+// }
 
 app.use(cors());
 app.use(express.static('build'));
