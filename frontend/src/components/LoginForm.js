@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setFlashMessage } from '../reducers/flashMessageReducer';
 import { loginUser } from '../reducers/currentUserReducer';
 import hooks from '../hooks/index';
+import Input from './Input';
 
 function LoginForm() {
   const username = hooks.useField('text');
@@ -21,22 +22,24 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} className="container">
+      <h2> Log In </h2>
       <div>
-        username
-        <input
+        <Input
           {...username.attrs}
           placeholder="Enter Username"
           name="username"
+          label="Username"
         />
       </div>
 
       <div>
-        password
-        <input
+        <Input
           {...password.attrs}
+          type="password"
           placeholder="Enter Password"
           name="password"
+          label="Password"
         />
       </div>
 
