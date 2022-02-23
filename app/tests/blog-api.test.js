@@ -86,9 +86,9 @@ describe('when there are blogs initially in database', () => {
       .expect(200);
 
     const retrievedBlogs = response.body;
-    const retrievedTargetBlog = retrievedBlogs.find((blog) => blog.id === targetBlog.id);
+    const retrievedBlog = retrievedBlogs.find((blog) => blog.id === targetBlog.id);
 
-    const comment = retrievedTargetBlog.comments[0];
+    const comment = retrievedBlog.comments[0];
 
     expect(comment.content).toBeDefined();
     expect(comment.content).toBe('a comment');
@@ -342,13 +342,10 @@ describe('deleting blogs', () => {
 describe('updating blogs', () => {
   test('can update existing blog', async () => {
     const targetBlog = (await testHelper.blogsInDB())[0];
+
     const updatedBlog = {
-      title: targetBlog.title,
-      author: targetBlog.author,
-      url: targetBlog.url,
-      likes: targetBlog.likes += 3,
-      id: targetBlog.id,
-      creator: targetBlog.creator,
+      ...targetBlog,
+      likes: targetBlog.likes + 3,
     };
 
     await api
@@ -363,13 +360,10 @@ describe('updating blogs', () => {
 
   test('updated blog has populated creator field', async () => {
     const targetBlog = (await testHelper.blogsInDB())[0];
+
     const updatedBlog = {
-      title: targetBlog.title,
-      author: targetBlog.author,
-      url: targetBlog.url,
-      likes: targetBlog.likes += 3,
-      id: targetBlog.id,
-      creator: targetBlog.creator,
+      ...targetBlog,
+      likes: targetBlog.likes + 3,
     };
 
     const response = await api
@@ -381,5 +375,30 @@ describe('updating blogs', () => {
     const retrievedBlog = response.body;
     expect(retrievedBlog.creator).toBeDefined();
     expect(retrievedBlog.creator.username).toBe(testUser.username);
+  });
+
+  test('updated blog that had comment has populated comments field', async () => {
+    const targetBlog = (await testHelper.blogsInDB())[0];
+    await api
+      .post(`/api/blogs/${targetBlog.id}/comments`)
+      .set('Authorization', `bearer ${token}`)
+      .send({ content: 'a comment' });
+
+    const updatedBlog = {
+      ...targetBlog,
+      likes: targetBlog.likes + 3,
+    };
+
+    const response = await api
+      .put(`/api/blogs/${targetBlog.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const retrievedBlog = response.body;
+    const comment = retrievedBlog.comments[0];
+
+    expect(comment.content).toBeDefined();
+    expect(comment.content).toBe('a comment');
   });
 });
