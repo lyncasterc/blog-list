@@ -26,5 +26,8 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['state'] }],
+    'react/jsx-props-no-spreading': [1, {
+      exceptions: ['input', 'Input'],
+    }],
   },
 };
