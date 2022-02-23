@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { likeBlog } from '../reducers/blogReducer';
+import CommentForm from './CommentForm';
+import Comments from './Comments';
 
 // import blogViewStyles from './BlogView.module.css';
 import Button from './Button';
@@ -31,6 +33,12 @@ function BlogView() {
         Posted by:
         {' '}
         {blog.creator.username}
+
+        <div>
+          <h3>Comments</h3>
+          <CommentForm blogId={blogId} />
+          <Comments comments={blog.comments} />
+        </div>
       </div>
     );
   }
