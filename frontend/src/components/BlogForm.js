@@ -1,30 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import propTypes from 'prop-types';
 import { createBlog } from '../reducers/blogReducer';
 import { setFlashMessage } from '../reducers/flashMessageReducer';
 import Input from './Input';
+import hooks from '../hooks/index';
 import Button from './Button';
 
 function BlogForm({ toggleVisibility }) {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setURL] = useState('');
+  const title = hooks.useField('text');
+  const author = hooks.useField('text');
+  const url = hooks.useField('text');
   const dispatch = useDispatch();
 
-  const addBlog = (e) => {
+  const addBlog = async (e) => {
     e.preventDefault();
-    dispatch(setFlashMessage({ type: 'success', message: 'New blog added!' }, 5));
-    dispatch(createBlog({
-      title,
-      author,
-      url,
-    }));
-
-    toggleVisibility();
-    setAuthor('');
-    setTitle('');
-    setURL('');
+    try {
+      await dispatch(createBlog({
+        title: title.attrs.value,
+        author: author.attrs.value,
+        url: title.attrs.value,
+      }));
+      dispatch(setFlashMessage({ type: 'success', message: 'New blog added!' }, 5));
+      toggleVisibility();
+    } catch (error) {
+      dispatch(setFlashMessage({ type: 'error', message: error.message }, 10));
+    } finally {
+      title.reset();
+      author.reset();
+      url.reset();
+    }
   };
 
   return (
@@ -32,8 +37,7 @@ function BlogForm({ toggleVisibility }) {
       <div>
         <Input
           label="Title: "
-          onChange={({ target }) => setTitle(target.value)}
-          value={title}
+          {...title.attrs}
           name="title"
           placeholder="Enter Title"
         />
@@ -42,8 +46,7 @@ function BlogForm({ toggleVisibility }) {
       <div>
         <Input
           label="Author: "
-          onChange={({ target }) => setAuthor(target.value)}
-          value={author}
+          {...author.attrs}
           name="author"
           placeholder="Enter Author"
         />
@@ -52,8 +55,7 @@ function BlogForm({ toggleVisibility }) {
       <div>
         <Input
           label="URL: "
-          onChange={({ target }) => setURL(target.value)}
-          value={url}
+          {...url.attrs}
           name="url"
           placeholder="Enter url"
         />

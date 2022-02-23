@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setFlashMessage } from '../reducers/flashMessageReducer';
 import { loginUser } from '../reducers/currentUserReducer';
+import hooks from '../hooks/index';
 
 function LoginForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const username = hooks.useField('text');
+  const password = hooks.useField('password');
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(loginUser(username, password));
+      await dispatch(loginUser(username.attrs.value, password.attrs.value));
     } catch (error) {
       dispatch(setFlashMessage({ type: 'error', message: error.message }, 10));
-      setUsername('');
-      setPassword('');
+      username.reset();
+      password.reset();
     }
   };
 
@@ -24,8 +25,7 @@ function LoginForm() {
       <div>
         username
         <input
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
+          {...username.attrs}
           placeholder="Enter Username"
           name="username"
         />
@@ -34,8 +34,7 @@ function LoginForm() {
       <div>
         password
         <input
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
+          {...password.attrs}
           placeholder="Enter Password"
           name="password"
         />
