@@ -11,7 +11,7 @@ function Users() {
       <h2> Users </h2>
 
       <div className={usersStyles['users-list']}>
-        <h3 className={usersStyles['blogs-created']}> blogs created </h3>
+        <h3 className={usersStyles['users-h2']}> blogs created </h3>
 
         {
         users.map((user) => (
