@@ -3,8 +3,10 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import Blog from './Blog';
-import { likeBlog, destroyBlog } from '../reducers/blogReducer';
+import BlogForm from './BlogForm';
+import Togglable from './Togglable';
 import { setFlashMessage } from '../reducers/flashMessageReducer';
+import { likeBlog, destroyBlog } from '../reducers/blogReducer';
 
 function Blogs({ currentUser }) {
   const dispatch = useDispatch();
@@ -18,7 +20,7 @@ function Blogs({ currentUser }) {
   };
 
   return (
-    <>
+    <div className="container">
       {
         blogs.map((blog) => (
           <Blog
@@ -35,7 +37,12 @@ function Blogs({ currentUser }) {
           />
         ))
       }
-    </>
+
+      <h2> Add New Blog </h2>
+      <Togglable buttonLabel="Add blog">
+        <BlogForm toggleVisibility={() => {}} />
+      </Togglable>
+    </div>
   );
 }
 

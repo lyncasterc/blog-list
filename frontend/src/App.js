@@ -11,9 +11,9 @@ import { initializeUsers } from './reducers/userReducer';
 import { initalizeCurrentUser } from './reducers/currentUserReducer';
 import LoginForm from './components/LoginForm';
 import Blogs from './components/Blogs';
-import BlogForm from './components/BlogForm';
+// import BlogForm from './components/BlogForm';
+// import Togglable from './components/Togglable';
 import FlashMessage from './components/FlashMessage';
-import Togglable from './components/Togglable';
 import Navbar from './components/Navbar';
 import Users from './components/Users';
 import User from './components/User';
@@ -56,12 +56,6 @@ function App() {
           <Route path="blogs/:blogId" element={<BlogView />} />
 
         </Routes>
-
-        <h2> Add New Blog </h2>
-
-        <Togglable buttonLabel="Add blog">
-          <BlogForm toggleVisibility={() => {}} />
-        </Togglable>
 
       </div>
     );
