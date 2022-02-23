@@ -13,6 +13,7 @@ function Input({
         onChange={onChange}
         placeholder={placeholder}
         name={name}
+        id={name}
       />
     </label>
   );
