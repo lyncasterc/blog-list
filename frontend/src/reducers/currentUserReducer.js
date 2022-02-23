@@ -1,6 +1,7 @@
 /* eslint-disable arrow-body-style */
 import { createSlice } from '@reduxjs/toolkit';
 import blogService from '../services/blogs';
+import commentService from '../services/comments';
 import loginService from '../services/login';
 
 const currentUserSlice = createSlice({
@@ -26,6 +27,7 @@ export const initalizeCurrentUser = () => {
     if (JSONTokenInfo) {
       const parsedTokenInfo = JSON.parse(JSONTokenInfo);
       blogService.setToken(parsedTokenInfo.token);
+      commentService.setToken(parsedTokenInfo.token);
       dispatch(setCurrentUser(parsedTokenInfo));
     }
   };
@@ -38,6 +40,7 @@ export const loginUser = (username, password) => {
       if (tokenInfo) {
         localStorage.setItem('bloglistAppUser', JSON.stringify(tokenInfo));
         blogService.setToken(tokenInfo.token);
+        commentService.setToken(tokenInfo.token);
         dispatch(setCurrentUser(tokenInfo));
       }
     } catch (error) {
