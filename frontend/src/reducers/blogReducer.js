@@ -31,8 +31,12 @@ export const {
 
 export const createBlog = (blog) => {
   return async (dispatch) => {
-    const savedBlog = await blogService.create(blog);
-    dispatch(appendBlog(savedBlog));
+    try {
+      const savedBlog = await blogService.create(blog);
+      dispatch(appendBlog(savedBlog));
+    } catch (error) {
+      throw new Error(error.message);
+    }
   };
 };
 
