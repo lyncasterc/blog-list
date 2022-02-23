@@ -1,6 +1,7 @@
 /* eslint-disable arrow-body-style */
 import { createSlice } from '@reduxjs/toolkit';
 import blogService from '../services/blogs';
+import commentService from '../services/comments';
 
 const blogSlice = createSlice({
   name: 'blogs',
@@ -35,6 +36,25 @@ export const createBlog = (blog) => {
       const savedBlog = await blogService.create(blog);
       dispatch(appendBlog(savedBlog));
     } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+};
+
+export const createComment = (blogId, comment) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const blog = state.blogs.find((b) => b.id === blogId);
+
+    try {
+      const savedComment = await commentService.create(blogId, comment);
+      const updatedBlog = {
+        ...blog,
+        comments: blog.comments.concat(savedComment),
+      };
+      dispatch(updateBlog(updatedBlog));
+    } catch (error) {
+      console.log(error.message);
       throw new Error(error.message);
     }
   };
