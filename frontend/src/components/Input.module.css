@@ -1,0 +1,15 @@
+.label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.input {
+  padding: 10px;
+  width: 100%;
+  border: none;
+  outline: 2px solid #ebebeb;
+}
+
+.input:focus {
+  outline-color: lightgreen;
+}

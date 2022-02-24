@@ -4,6 +4,8 @@ import { setFlashMessage } from '../reducers/flashMessageReducer';
 import { loginUser } from '../reducers/currentUserReducer';
 import hooks from '../hooks/index';
 import Input from './Input';
+import Button from './Button';
+import loginFormStyles from './LoginForm.module.css';
 
 function LoginForm() {
   const username = hooks.useField('text');
@@ -22,29 +24,37 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleLogin} className="container">
-      <h2> Log In </h2>
-      <div>
-        <Input
-          {...username.attrs}
-          placeholder="Enter Username"
-          name="username"
-          label="Username"
-        />
-      </div>
+    <div className={loginFormStyles['form-container']}>
+      <form onSubmit={handleLogin} className={loginFormStyles.form}>
+        <h2 className={loginFormStyles.title}> Log In </h2>
 
-      <div>
-        <Input
-          {...password.attrs}
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          label="Password"
-        />
-      </div>
+        <div className={loginFormStyles['form-control']}>
+          <Input
+            {...username.attrs}
+            name="username"
+            label="Username"
+            required
+          />
 
-      <button type="submit">Log in</button>
-    </form>
+        </div>
+
+        <div className={loginFormStyles['form-control']}>
+          <Input
+            {...password.attrs}
+            type="password"
+            name="password"
+            label="Password"
+            required
+          />
+        </div>
+
+        <div className={`${loginFormStyles['form-control']} ${loginFormStyles['form-btn']} `}>
+          <Button
+            buttonText="Login"
+          />
+        </div>
+      </form>
+    </div>
   );
 }
 

@@ -10,21 +10,38 @@ function Navbar() {
   const currentUser = useSelector((state) => state.currentUser);
 
   return (
-    <div className={navbarStyles.navbar} data-cy="navbar">
-      <Link to="/"> Blogs </Link>
-      <Link to="/users"> Users </Link>
-      <p>
-        {' '}
-        { currentUser.name }
-        {' '}
-        logged in
-        {' '}
-      </p>
-      <Button
-        onClick={() => dispatch(logoutUser())}
-        buttonText="Log out"
-      />
-    </div>
+    <nav className={navbarStyles.navbar} data-cy="navbar">
+      <div className={navbarStyles['navbar-left']}>
+        <div className={navbarStyles['navbar-item']}>
+          <Link to="/"> Blogs </Link>
+        </div>
+
+        <div className={navbarStyles['navbar-item']}>
+          <Link to="/users"> Users </Link>
+        </div>
+
+      </div>
+
+      <div className={navbarStyles['navbar-left']}>
+        <div className={navbarStyles['navbar-item']}>
+          <p>
+            {' '}
+            { currentUser.name }
+            {' '}
+            logged in
+            {' '}
+          </p>
+        </div>
+
+        <div className={`${navbarStyles['navbar-item']}`}>
+          <Button
+            onClick={() => dispatch(logoutUser())}
+            buttonText="Log out"
+          />
+        </div>
+      </div>
+
+    </nav>
   );
 }
 

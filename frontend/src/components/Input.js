@@ -1,12 +1,16 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import inputStyles from './Input.module.css';
 
 function Input({
-  label, name, type, value, onChange, placeholder,
+  label, name, type, value, onChange, placeholder, required,
 }) {
   return (
-    <label htmlFor={name}>
-      {label}
+    <>
+      <label htmlFor={name} className={inputStyles.label}>
+        {label}
+        {' '}
+      </label>
       <input
         type={type}
         value={value}
@@ -14,8 +18,10 @@ function Input({
         placeholder={placeholder}
         name={name}
         id={name}
+        className={inputStyles.input}
+        required={required}
       />
-    </label>
+    </>
   );
 }
 
@@ -26,6 +32,7 @@ Input.propTypes = {
   name: propTypes.string,
   type: propTypes.string,
   placeholder: propTypes.string,
+  required: propTypes.bool,
 };
 
 Input.defaultProps = {
@@ -33,6 +40,7 @@ Input.defaultProps = {
   name: '',
   type: 'text',
   placeholder: '',
+  required: false,
 };
 
 export default Input;

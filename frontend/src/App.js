@@ -34,7 +34,7 @@ function App() {
 
   if (currentUser.token) {
     return (
-      <div className="container">
+      <div>
         <FlashMessage />
 
         <Navbar />
