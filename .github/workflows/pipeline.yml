@@ -1,0 +1,79 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    - branches
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  test_lint_app:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: npm install
+        run: npm install
+      - name: lint
+        run: npm run lint
+      - name: test
+        run: npm test
+  test_lint_frontend:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: npm install
+        run: npm install
+      - name: lint
+        run: npm run lint
+      - name: cypress tests
+        uses: cypress-io/github-action@v2
+        with: 
+          start: npm run cypress:workflow
+          wait-on: http://localhost:3000
+  build:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: app
+    needs: [test_lint_app, test_lint_frontend]
+    steps:
+      - uses: actions/checkout@v3
+      - name: build ui
+        run: npm run build:ui
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: [build]
+    if: ${{ github.event_name == 'push' }}
+    with:
+      heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+      heroku_app_name: "bloglist-app-sc"
+      heroku_email: "stiven.cabrera3@gmail.com"
+      appdir: "app"
+      healthcheck: "https://git.heroku.com/bloglist-app-sc.git/health"
+      checkstring: "ok"
+      rollbackonhealthcheckfailed: true
+  tag_release:
+    needs: [deploy]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.36.0
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
