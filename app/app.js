@@ -34,6 +34,11 @@ app.use(express.static('build'));
 app.use(express.json());
 app.use(middleware.requestLogger);
 
+// healthcheck endpoint for Github Actions worflow
+app.get('/health', (request, response) => {
+  response.send('ok');
+});
+
 app.use(middleware.tokenExtractor);
 app.use('/api/blogs', blogsRouter);
 blogsRouter.use('/:blogId/comments', commentRouter);
