@@ -42,10 +42,10 @@ jobs:
       - name: cypress tests
         uses: cypress-io/github-action@v2
         with: 
-          project: ./frontend
+          # project: ./frontend
           start: npm run cypress:workflow
           wait-on: http://localhost:3000
-          working-directory: frontend
+          working-directory: ./frontend
 
   build:
     runs-on: ubuntu-20.04
