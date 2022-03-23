@@ -39,6 +39,10 @@ jobs:
         run: npm install
       - name: lint
         run: npm run lint
+      - name: install app dependencies (for cypress to run)
+        run: |
+          cd ../app
+          npm install
       - name: cypress tests
         uses: cypress-io/github-action@v2
         with: 
@@ -62,16 +66,16 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
-    - uses: actions/checkout@v2
-    - uses: akhileshns/heroku-deploy@v3.12.12
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: "bloglist-app-sc"
-        heroku_email: "stiven.cabrera3@gmail.com"
-        appdir: "app"
-        healthcheck: "https://git.heroku.com/bloglist-app-sc.git/health"
-        checkstring: "ok"
-        rollbackonhealthcheckfailed: true
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "bloglist-app-sc"
+          heroku_email: "stiven.cabrera3@gmail.com"
+          appdir: "app"
+          healthcheck: "https://git.heroku.com/bloglist-app-sc.git/health"
+          checkstring: "ok"
+          rollbackonhealthcheckfailed: true
   tag_release:
     needs: [deploy]
     runs-on: ubuntu-20.04
