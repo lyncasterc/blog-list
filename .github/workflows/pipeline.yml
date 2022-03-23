@@ -45,6 +45,8 @@ jobs:
           project: ./frontend
           start: npm run cypress:workflow
           wait-on: http://localhost:3000
+          working-directory: frontend
+
   build:
     runs-on: ubuntu-20.04
     defaults:
