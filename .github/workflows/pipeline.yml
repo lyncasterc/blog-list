@@ -82,7 +82,7 @@ jobs:
           heroku_app_name: "bloglist-app-sc"
           heroku_email: "stiven.cabrera3@gmail.com"
           appdir: "app"
-          healthcheck: "https://git.heroku.com/bloglist-app-sc.git/health"
+          healthcheck: " https://bloglist-app-sc.herokuapp.com"
           checkstring: "ok"
           rollbackonhealthcheckfailed: true
   tag_release:
