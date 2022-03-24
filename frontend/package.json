@@ -26,7 +26,6 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:tests": "concurrently \"npm run server:dev\" \"npm start\" \"npm run cypress:open\"",
-    "cypress:workflow": "concurrently \"npm run server:dev\" \"npm start\"",
     "lint": "eslint ."
   },
   "proxy": "http://localhost:3001",
