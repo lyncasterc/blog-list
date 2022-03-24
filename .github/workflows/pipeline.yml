@@ -44,15 +44,15 @@ jobs:
         run: |
           cd ../app
           npm install
-      - name: cypress tests
-        env:
-            PORT: 3001
-        uses: cypress-io/github-action@v2
-        with: 
-          # project: ./frontend
-          start: npm run server:dev
-          wait-on: http://localhost:3001
-          working-directory: ./frontend
+      # - name: cypress tests
+      #   env:
+      #       PORT: 3001
+      #   uses: cypress-io/github-action@v2
+      #   with: 
+      #     # project: ./frontend
+      #     start: npm run server:dev
+      #     wait-on: http://localhost:3001
+      #     working-directory: ./frontend
 
   build:
     runs-on: ubuntu-20.04
