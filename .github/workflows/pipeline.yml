@@ -50,7 +50,7 @@ jobs:
         with: 
           # project: ./frontend
           start: npm run server:dev
-          wait-on: http://localhost:3001
+          wait-on: http://localhost:3001/health
           working-directory: ./frontend
 
   # build:
